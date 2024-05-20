@@ -1,0 +1,48 @@
+Jump Box Creds
+  Student#: student19
+  Command: ssh student@10.50.38.176 -X
+  Password: password
+
+OSI Model
+      layer            pdu
+  Physical Layer  Bit  
+  Datalink Layer  frame
+  Network Layer  packet
+  Transport Layer  segment/datagram
+  session-application layers   data
+
+Internet public Standards organizations
+ 
+  IETF -RFC 
+    technical standards
+  IANA -  Internet Numbers
+          assigns ip space
+  IEEE - LAN/WAN Electrical Standards
+
+  ------------------
+
+  Layer one
+    Binary
+    Decimal  
+    Hexadecimal
+    Base64
+  
+  
+  Binary Representation
+  base2
+    on and off
+    set or not set
+    a bit can set a flag or unset it
+    turn the flag on or off
+    0 = off/not-set
+    1 = on/set
+
+  Decimal Base10
+  
+  Hexadecimal 
+  base16
+
+  base64
+   == is a null character
+    can be used as padding indicating the end with nothing further to follow
+  https://git.cybbh.space/net/public/raw/master/modules/networking/slides-v4/images/encap.png
