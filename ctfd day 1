@@ -1,0 +1,38 @@
+1. Arp Storm
+Source: Cisco251_af:f4:54 (00:07:0d:af:f4:54)
+
+2. find mac from a given ip
+ip addr == <ip>
+enter
+	find a successful ping and match the ip to mac based on whether it is the source or destination
+Source: Dell_f0:92:ab (00:1d:09:f0:92:ab)
+
+3.Source: Universa_6c:0c:cc (00:1a:6b:6c:0c:cc)
+
+
+4. arp find the man in the middle attackers
+gratuitous arp
+find the arp replies, then find the mac claiming to be some ip, would be a change from a previous mac to ip match
+arp.opcode == 2
+Sender MAC address: fa:16:3e:35:21:5a (fa:16:3e:35:21:5a)
+
+5 Rarp request is opcode 3
+
+6 Rarp resoponse is opcode 4
+
+7 arp.opcode == 3
+Source: VMware_34:0b:de (00:0c:29:34:0b:de)
+
+8. filter by mac to find ip
+eth.addr== <mac>
+ans: 
+	<mac> is at <ip>
+10.1.1.100
+ 
+9.
+What is the MAC of the system spamming gratuitous ARP’s for 192.168.1.254?
+
+arp.opcode==2
+find the ethernet source mac
+Ethernet II, Src: IETF-VRRP-VRID_01 (00:00:5e:00:01:01), Dst: Broadcast (ff:ff:ff:ff:ff:ff)
+
