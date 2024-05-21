@@ -1,0 +1,286 @@
+Day 2
+Traffic Capture
+
+user based socket tcp udp 
+	can be done without elevated permissions
+	built in
+
+kernel space sockets
+	system modifications
+	raw sockets
+ip a or ip addrlinux interface
+primitives are short names ie tcp udp arp ether src
+
+TCPDump
+	-A = print payload in ASCII
+    • -D = list interfaces
+    • -i = specify capture interface
+    • -e = print data-link headers
+    • -X or XX = print payload in HEX and ASCII
+-w = write to pcap
+    • -r = read from pcap
+    • -v, vv, or vvv = verbosity
+    • -n = no inverse lookups
+< or < =
+    • > or >=
+    • = or !=
+Concatenation: 'and' ( && )
+    • Alteration: 'or' ( || )
+    • Negation: 'not' ( ! )
+
+
+
+
+
+Verify TCPDUMP
+tcpdump -d "<expression>"
+tcpdump -d arp
+(000) ldh      [12]
+(001) jeq      #0x806           jt 2 jf 3
+(002) ret      #262144
+(003) ret      #0
+
+load hex dump at byte 12
+jump to  if  equal to  then jump to if equal to two if not then jump to 3
+return
+
+
+
+
+Berkley packet filters
+
+
+d
+
+
+go to byte offset 12 and then look at 2 bytes within
+-d = Dump the compiled packet-matching code in a human readable form
+ldh  - loads half-word (16-bit) value in the accumulator from offset 12
+      in the ethernet header
+jeq - check if the value is "0x800" and if this is true "jump true" to line 2,
+      if it is false "jump false" to line 3
+ret #262144 - returns the default snapshot length in bytes
+ret #0 - returns nothing, it didn’t meet the criteria in the jeq stateme
+
+
+h
+Bitwise Masking
+    • BPFs can read 1 (byte), 2 (half-word) or 4 (word)
+    • BPFs alone will only filter to the byte level
+    • Bit-wise masking allow filtering precision to the bit level
+    • Binary (0) to ignore bit
+    • Binary (1) to match bit
+Bitwise Masking examples
+tcpdump 'ether[12:4] & 0xffff0fff = 0x81000abc'
+tcpdump 'ip[1] & 252 = 32'
+tcpdump 'ip[6] & 224 != 0'
+tcpdump 'tcp[13] & 0x11 = 0x11'
+tcpdump 'tcp[12] & 0xf0 > 0x50'
+& indicates bitwise masking
+
+Filter logic – less exclusive
+
+d
+
+
+
+BPFs at the Data-Link layer
+
+how to use BPFS and look at more than four bytes ie larger than a word
+EX. Mac Address
+
+Search for the source MAC address of fa:16:3e:f0:ca:fc.
+
+
+
+
+Search for the destination broadcast MAC address.
+
+
+VLANs do not go through access points they are a switch layer two protocol and is stripped off before proceeding to layer 3. Users do not view the VLAN the computer does
+
+VLANs only exist in the switch and while communicating with other switches
+when the user prompts the computer to send for example a ping it has no vlan tag
+the switch adds the VLAN tag encapsulation to the ping in order to pass/communicate this ping to the correct destination on the switch in which it is destined for once the receiving switch gets the vlan tagged ping it strips the tag off before allowing it to proceed on to its final destination
+
+VLAN tags only exist on the switch within the trunk for travel purposes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DSCP
+its a nibble and a half a nibble aka a nibble and two bits or 6bits
+Search for ipv4 DSCP value of 16.
+'ip[1] & 0xfc = 0x40'
+'ip[1] & 252 = 64'
+'ip[1] >> 2 = 16'
+Search for traffic class in ipv6 having a value.
+'ip6[0:2] & 0x0ff0 != 0'
+
+must shift two bits in order to account for the ecn (in order to ignore the ecn)
+
+
+DSCP =1 		ECN = 2
+
+0000 01		10
+	01	10	equals 6 reads as 6
+	01	10	ignore ECN then
+	01   		now reads as 4
+0000 	01
+
+
+read the binary left to right
+
+BPFs at the Transport layer
+    • Search for TCP source port 3389.
+'tcp[0:2] = 3389'
+rdp into you from the server
+    • Search for TCP destination port 3389.
+'tcp[2:2] = 3389'
+rdp out to the server
+    • Search for TCP source or destination port 3389.
+'tcp[0:2] = 0x0d3d || tcp[2:2] = 0x0d3d'
+any rdp any direction of connection
+
+c apture filters are applied prior to loading to wireshark, its applied on ingress before any other rules or filters are applied. Ie determines what will actually be captured
+for example can build a capture to only capture voip traffic or any other traffic of interest
+
+the display filter is the filter within wireshark post capture filtering
+
+
+
+
+Passive OS Fingerprinting (P0F)
+Similar to tcpdump except it only captures traffic that matches signatures in its database file.
+Operating systems
+    • Searches for specific signatures in:
+        ◦ Most Operating Systems
+        ◦ Most Browsers
+        ◦ Search Robots
+        ◦ Command Line Tools
+P0f Signature Database
+
+K
+
+
+P0F Help
+
+Run p0f on interface
+K
+Run p0f on a pcap
+K
+
+Output to greppable log file
+Kj
+
+sudo tcpdump -XXvvn ‘ip[9]=17’ -r Xtra.pcap
+
+-XX
+-vv
+n no lookup
+byte 9 next protocol
+-r
+
+
+
+DHCP
+
+
+
+sudo tcpdump -XXvvn ‘tcp[0:2] > 49151’ -r Xtra.pcap
+sudo tcpdump -XXvvn ‘tcp[0:2] >= 49152’ -r Xtra.pcap
+
+client talking to a server initial connnection
+
+
+see no contents quick info or specific information use bash commands
+sudo tcpdump -XXvvn ‘tcp[0:2] > 49151’ -r Xtra.pcap | wc -l
+
+sudo tcpdump -XXvvn ‘tcp[0:2] > 49151’ -r Xtra.pcap | cut -d. -f5
+sudo tcpdump -XXvvn ‘tcp[0:2] > 49151’ -r Xtra.pcap | awk ‘{print $2, $3}’
+sudo tcpdump -XXvvn ‘tcp[0:2] > 49151’ -r Xtra.pcap | awk ‘{print $3}’ | sort -u | wc -l
+
+see no contents quick info or specific information use bash commands
+
+search the telnet 23 so search the tcp header for the destination port
+sudo tcpdump -XXvvn ‘tcp[2:2] =23’ -r Xtra.pcap 
+
+
+sudo tcpdump -XXvvn ‘tcp[0:2] =23 || tcp[2:2] =23’ -r Xtra.pcap 
+
+
+search for ip 10.10.0.40
+sudo tcpdump -XXvvn ‘ip[16:4] =0x0a0a0028’ -r Xtra.pcap 
+
+ips beginning 10.10
+sudo tcpdump -XXvvn ‘ip[16:2] =0x0a0a’ -r Xtra.pcap 
+
+BPFS
+sudo tcpdump -XXvvn ‘ip[16:4]& 0xffffff’ -r Xtra.pcap 
+
+
+
+search for an ip and port usage
+sudo tcpdump -XXvvn ‘ip[16:4]=0x0a0a0062 && (tcp[0:2] =23 || tcp[2:2] =23)’ -r Xtra.pcap 
+
+
+
+
+
+CTF Challenges and Practice
+
+SMB 
+1. TCP 445
+2. putty.exe *** looked at the an ack for smb and followed the tcp stream saw string of text for a file name
+3. DHCP *** to find DORA discover offer request acknowledge 192.168.0.1
+4.192.168.0.10
+5.3600
+6.microsoft
+wikipedia.org
+hotmail.com
+etas.com  DNS zone transfer AXFR****
+student10/password10
+Request arg: DO_NOT_LOOK.txt
+12. *** Read contents of a file that was transferred via FTP????
+13. Identify passive FTP ports?????
+14. www.faqs.org follow the http stream
+15.snippets.cdn.mozilla.net
+16.msn.com
+17.twitter.com look at tcp.port==443 && tls then search for client hello and analyze the strings or follow tcp stream. TLS stream produces no result
+18.virginmedia.com look at the EHLO
+19.owadomyi2897@virginmedia.com
+20.sizes
+21.mx.google.com smtp && ipv6
+22. neulingern
+23.13
+24. Jerry Hammonds *** use the find function after following the tcp streaming
+25.digitalinvestigator@networksims.com
+26. 3
+27. Edinburgh Napier follow tcp stream and use find function bar to search
+28. 192.168.50.50 ??????
+29. SEP 27, 2004
+30. 3
+
+31. 172.16.40.10
+32. SSH-2.0-OpenSSH_7.9p1 Debian-10+deb10u2
+33. Diffie-Hellman
+34.MSS maximum segment size found in the TCP SYN and SYN/ACK packets of ssh
+tcp.port==22
+1410
+35.7 analyze the TCP-Options-Shift count: for ssh using tcp.port==22 for the syn packets
