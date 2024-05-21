@@ -1,0 +1,561 @@
+
+
+
+
+
+Encapsulation and Decapsulation
+
+MAC Address Types
+    • Unicast: One to one
+        ◦ 8th bit is off
+    • Multicast: One to many
+        ◦ 8th bit is on
+    • Broadcast: One to all
+        ◦ All bits on
+
+
+Ethernet Header Frame
+
+Frame
+
+
+Breakdown
+
+VLANs and their purpose
+
+Network segregation while using switches ensuring that only desired members/devices of the network can only communicate with a network member/device that it is allowed
+
+communication restriction
+
+Figure 18. 801.1ad Frame
+
+Trumks/Trunking ***********
+
+VLAN Tags and ether types
+	attacks through switch spoofing and double tagging
+	which allows the bypass of implemented segregation mechanisms such as VLANs
+
+
+ARP
+
+
+bite offset allows you to reference the frame in specific places/positions
+
+
+Protocol address length is bite offset 5 ? ***edit this shit
+	ex. Hardware type begins at byte 0 bit bit 0 and contains two bits bit 0 and bit 1
+	ex . Protocol type begins at byte 2 bit 2 and ends at byte 3 and is 2 bytes long containing byet 2 and 3
+	ex. Hardware address length begins at byte 4 and is 1 bit long
+
+gratuitous arp is unsolicited ??? claims for the arp table? Macs claiming ips can appear as an extra hop which could be a man in the middle attack via arp cache poisoning
+
+ ip neigh
+
+
+VLAN Trunking Protocol (Cisco Proprietary protocol)
+	VTP
+		dynamically updates a server/domain
+		propagates automatically
+
+
+Vulnerability
+	cause of switches dump all VLAN information
+	could be malicious or accidental
+	can cause a denial of service as the switch will no longer support the configured VLANs
+
+remedy remove the offending/infected device
+	it does not receive it pushes information. So just get rid of the problem
+
+ 
+
+dynamic trunking 
+protocol
+
+
+
+
+
+
+
+
+
+
+
+
+packets stuck in a loop is a broadcast storm
+	STP is a method to prevent this as it disables temporarily any link that is not the best route out. Redundancy can still be in place as a backup
+
+route bridge selection route out of the network
+
+spanning tree attack
+	can craft a bdu to deny service with a false/erroneous/spoofed bridge
+
+Port Security
+	Restrict – block without shutting down
+	protect- lets through but logs the mac
+	shutdown – is shutdown
+
+
+Ethernet Frames
+Network Layer
+
+
+
+d
+
+
+must use options with tcpdump in order to look at the lower level layers ie router protocols
+
+
+BGP Hijacking Defense
+    • IP prefix filtering
+    • BGP hijacking detection
+        ◦ Tracking the change in TTL of incoming packets
+        ◦ Increased Round Trip Time (RTT) which increases latency
+        ◦ Monitoring misdirected traffic (change in AS path from tools like Looking Glass)
+    • BGPSec
+
+
+
+
+hlk
+
+
+
+
+layer 4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TCP Header
+Flags
+
+States
+
+TCP Options
+    • 0 - End of Options
+    • 1 - No Options (NOP)
+    • 2 - Maximum Segment Size (MSS)
+    • 3 - TCP Windows Scaling
+    • 4 - Selective ACK (SACK) Permitted
+    • 5 - SACK
+    • 8 - TCP Timestamps
+
+
+
+
+
+
+
+Layer 5
+VPN
+tunnels
+
+
+
+
+Tunnels
+
+
+
+OpenVPN
+    • Open source
+    • Uses OpenSSL for encryption
+    • UDP*/TCP port 1194
+
+
+SOCKS 4/5 (TCP 1080)
+
+    • RFC 1928
+    • Uses various Client / Server exchange messages
+        ◦ Client can provide authentication to server
+        ◦ Client can request connections from server
+SOCKS4
+    • No Authentication
+    • Only IPv4
+    • No UDP support
+    • No Proxy binding. Client’s IP is not relayed to destination.
+SOCKS5
+    • Various methods of Authentication
+    • IPv4 and IPv6 support
+    • UDP support
+    • Supports Proxy binding. Client’s IP is relayed to destination.
+Network Basic Input Output System (NetBIOS) protocol
+    • TCP 139 and UDP 137/138
+    • Name Resolution (15 characters)
+    • Largely replaced by DNS
+SMB/CIFS (TCP 445)
+
+SMB Rides over Netbios
+    • Netbios Dgram Service - UDP 138
+    • Netbios Session Service - TCP 139
+    • SAMBA and CIFS are just flavors of SMB
+
+
+
+RPC (any port)
+    • Allows a program to execute a request on a local/remote computer
+    • Hides network complexities
+    • XML, JSON, SOAP, and gRPC
+    • User application will:
+        1. Request for information from external server
+        2. Receives the information from the external server
+        3. Display collected data to User
+API
+    • Framework of rules and protocols for software components to interact.
+    • Methods, parameters, and data formats for requests and responses.
+    • REST and SOAP
+        ◦ how users interact with applications
+        ◦ usually where 3rd party software or content hook into your local software
+        ◦ Formatting so tools can work
+
+Explain OSI Layer 6 functions and responsibilities
+Responsibilities
+    • Translation
+    • Formating
+    • Encoding (ASCII, EBCDIC, HEX, BASE64)
+    • Encryption (Symmetric or Asymmetric)
+    • Compression
+Explain OSI Layer 7 protocols and headers
+Telnet (TCP 23)
+
+    • Remote Login
+    • Authentication
+    • Clear Text
+    • Credentials susceptible to interception
+SSH (TCP 22)
+
+    • Messages provide:
+        ◦ Client/server authentication
+        ◦ Asymmetric or PKI for key exchange
+        ◦ Symmetric for session
+        ◦ User authentication
+        ◦ Data stream channeling
+SSH Architecture
+    • Client / Server / Session
+    • Keys
+        ◦ User Key - Asymmetric public key used to identify the user to the server
+        ◦ Host Key - Asymmetric public key used to identify the server to the user
+        ◦ Session Key - Symmetric key created by the client and server to protect the session’s communication.
+Ssh architecture
+
+
+
+dfewj
+
+SSH First Connect SSH
+student@internet-host:~$ ssh student@172.16.82.106
+The authenticity of host '172.16.82.106 (172.16.82.106)' can't be established.
+ECDSA key fingerprint is SHA256:749QJCG1sf9zJWUm1LWdMWO8UACUU7UVgGJIoTT8ig0.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '172.16.82.106' (ECDSA) to the list of known hosts.
+student@172.16.82.106's password:
+student@blue-host-1:~$
+	You will need to approve the Server Host (Public) Key
+      Key is saved to /home/student/.ssh/known_hosts
+SSH Reconnect 
+
+
+ssh student@172.16.82.106
+student@172.16.82.106's password:
+student@blue-host-1:~$
+    • Further SSH connections to server will not prompt to save key as long as key does not change
+
+
+
+SSH Host Key Change
+
+ssh student@172.16.82.106
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ECDSA key sent by the remote host is
+SHA256:RO05vd7h1qmMmBum2IPgR8laxrkKmgPxuXPzMpfviNQ.
+Please contact your system administrator.
+Add correct host key in /home/student/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /home/student/.ssh/known_hosts:1
+remove with:
+ssh-keygen -f "/home/student/.ssh/known_hosts" -R "172.16.82.106"
+ECDSA host key for 172.16.82.106 has changed and you have requested strict checking.
+Host key verification failed.
+SSH Key change Fix
+
+ssh-keygen -f "/home/student/.ssh/known_hosts" -R "172.16.82.106"
+	
+	Copy/Paste the ssh-keygen message to remove the Host key from the known_hosts file
+      When you re-connect it will prompt you to save the new Host key
+
+SSH Files
+	Known-Hosts Database
+      ~/.ssh/known_hosts
+    • Configuration Files
+      /etc/ssh/ssh_config
+      /etc/ssh/sshd_config
+View/Change SSH Port
+
+     To view the current configured SSH port
+
+  	  cat /etc/ssh/sshd_config | grep Port
+
+    Edit file to change the SSH Port
+
+   	 sudo nano /etc/ssh/sshd_config
+
+    Restart the SSH Service
+
+   	 systemctl restart ssh
+
+
+
+
+SSH-KEYGEN
+ssh-keygen -t rsa -b 4096 -C "Student"
+    • Create your own SSH Public/Private keys
+        ◦ -t Encryption (rsa|dsa|ecdsa|ed25519)
+        ◦ -b Bit length (1024|2048|4096)
+        ◦ -C Adds a comment
+    • ~/.ssh/id_rsa and ~/.ssh/id_rsa.pub
+SSH-COPY-ID
+ssh-copy-id student@172.16.82.106
+    • Copies your SSH Public key to the remote server
+    • Saves key to ~/.ssh/authorized_keys on remote server
+    • Allows you to authenticate with server using your key instead of password
+    • Must secure your private key
+HTTP(s) (TCP 80/443)
+
+    • User Request methods
+        ◦ GET / HEAD / POST / PUT
+    • Server response Codes
+        ◦ 100, 200, 300, 400, 500
+
+HTTP(s) Vulnerabilities
+    • Flooding
+    • Amplification
+    • Low and slow
+    • Drive-By Downloads
+    • BeEF Framework
+
+DNS (TCP/UDP43)
+
+DNS query/response
+    • Resolves Names to IP addresses
+    • Queries and responses use UDP
+    • DNS response larger than 512 bytes use TCP
+        ◦ DNS Zone Transfer
+        ◦ DNS Security
+
+DNS Records
+    • A - IPv4 record
+    • AAAA - IPv6 record
+    • MX - Mail Server record
+    • TXT - Human-readable text
+    • NS - Name Server record
+    • SOA - Start of Authority
+
+
+DNS Architecture
+
+
+FTP (TCP 20/21)
+
+    • RFC 959
+    • Port 21 open for Control
+    • Port 20 only open during data transfer
+FTP (TCP 20/21)
+    • Authentication or Anonymous
+    • Clear Text
+    • Modes:
+        ◦ Active (default)
+        ◦ Passive
+
+
+FTP Active
+
+
+
+don’t call me I will call you bc I do not accept calls from outsiders that is how I stay active
+
+FTP Active issues
+    • NAT and Firewall traversal issues
+    • Complications with tunneling through SSH
+    • Passive FTP solves issues related to Active mode and is most often used in modern systems
+
+
+
+
+FTP PASSIVE
+
+
+FTP Passive
+
+
+
+
+
+TFTP (UDP 69)
+
+
+
+    Clear-Text
+
+    Reliability provided at Application layer
+
+    Used by routers and switches to transfer IOS and config files
+
+
+SNMP is inherently weak and can be sniffed
+
+RTP streaming 
+
+
+LDAP (TCP 389 and 636)
+
+
+Task one
+
+wireshark /home/activity_resources/pcaps/packet-headers.pcapng 
+
+1. Arp Storm
+Source: Cisco251_af:f4:54 (00:07:0d:af:f4:54)
+
+2. find mac from a given ip
+ip addr == <ip>
+enter
+	find a successful ping and match the ip to mac based on whether it is the source or destination
+Source: Dell_f0:92:ab (00:1d:09:f0:92:ab)
+
+3.Source: Universa_6c:0c:cc (00:1a:6b:6c:0c:cc)
+
+
+4. arp find the man in the middle attackers
+gratuitous arp
+find the arp replies, then find the mac claiming to be some ip, would be a change from a previous mac to ip match
+arp.opcode == 2
+Sender MAC address: fa:16:3e:35:21:5a (fa:16:3e:35:21:5a)
+
+5 Rarp request is opcode 3
+
+6 Rarp resoponse is opcode 4
+
+7 arp.opcode == 3
+Source: VMware_34:0b:de (00:0c:29:34:0b:de)
+
+8. filter by mac to find ip
+eth.addr== <mac>
+ans: 
+	<mac> is at <ip>
+10.1.1.100
+ 
+9.
+What is the MAC of the system spamming gratuitous ARP’s for 192.168.1.254?
+
+arp.opcode==2
+find the ethernet source mac
+Ethernet II, Src: IETF-VRRP-VRID_01 (00:00:5e:00:01:01), Dst: Broadcast (ff:ff:ff:ff:ff:ff)
+
+10.identity a switch device via wireshark
+
+cdp
+look for the description switch for device ID
+under cdp
+	software version
+copy the value
+IOS (tm) C2950 Software (C2950-I6K2L2Q4-M), Version 12.1(22)EA14, RELEASE SOFTWARE (fc1)
+
+11. identify field info of cdp
+
+info field
+	device id
+	R1
+under cdp
+	software version
+copy the value
+IOS (tm) 1600 Software (C1600-NY-L), Version 11.2(12)P, RELEASE SOFTWARE (fc1)
+
+12.
+filter is lldp
+SysN is System Name
+S1.cisco.com
+S2.cisco.com
+
+13. identify root bridge priority based on stp (directly connected(lowest number)has the highest priority)
+0
+
+14.
+Root Identifier: 0 / 0 / 00:1f:27:b4:7d:80
+
+15.
+VLAN Trunking Protocol
+VTP
+Management Name: cisco
+
+16.
+What is the latest configuration revision number?
+VTP
+	Configuration revision number: 11
+
+
+17.
+I pitty the foo
+18.
+999
+20.
+250
+21.
+Wouldn't you like too be a pepper Too!
+22.
+Linux
+ttl of 64
+23.
+24.
+25
+windows
+26
+27
+28. 128
+129
+134
+31. ICMPv6 Option (Source link-layer address : fa:16:3e:35:21:5a)
+32. ICMPv6 Option (Prefix information : beef:4:f00d::/64)
+192.168.0.1
+224.0.0.2
+35. 192.168.0.30
+36. after the takeover 192.168.0.10
+224.0.0.18
+192.168.1.254
+3
+2
+200.0.1.0,200.0.2.0
+UDP 520
+43.
+
+47. ff02::a
+Ethernet II, Src: c2:00:36:6d:00:00 (c2:00:36:6d:00:00), Dst: IPv6mcast_0a (33:33:00:00:00:0a)
+
+
+49.	89
+50. 192.168.170.8
+224.0.0.5
+52. 3
+
+53	10.0.0.0,172.16.0.0,192.168.4.0
+65210
+TCP 179
+!"#$%&'()*+,-./0123456789:;<=>?
