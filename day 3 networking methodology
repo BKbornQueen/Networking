@@ -1,0 +1,73 @@
+Network map
+draw.io
+
+net recon methodology
+
+host discovery
+ruby ping sweep
+nmap scan if no ping
+
+port discovery
+nmap
+nc scan script
+
+port validation
+banner grabbing usind nc
+ 
+
+follow on action based on ports found
+if 22 or 23 connet and passive recon
+if 21 FTP [IP ADDR] connects to the ftpserver
+	passive
+	ls
+	get [file name]
+if 21 or 80 wget -r  iP_ADDRESS (or) wget -r ftp:/IP_ADDRESS (or) firefox
+
+scan methodology	
+nmap -Pn [IP Addr] -T4 -p 21-23,80
+
+quick scan ports 21-23, 80
+specific ports based on hints/clues found
+well known port range
+which tcpdump wireshark nmap telnet curl ping
+
+	0-1023(actually scan 1-1023)
+chunks of 2000 or first 10000 ports (65535
+hail mary -scan all the ports (65535
+
+Passive Recon Methodology
+Italiciezewd/dolded words are commands
+
+hostname
+
+permisions 
+sudo -l
+	what sudo access
+interfaces and subnets
+	ip a
+	ip addr
+	ifconfig
+neighbors (arp cache)
+	ip n
+	ip neigh
+	arp -a
+files of interest
+	find
+other listening ports 
+	netstat -anop
+	ss -ntlp
+	ss -tlp
+	ss -nulp
+availbale tools
+	sudo which tcpdump wiershark nmap telnet get curl ping ssh 
+get
+curl
+ping
+ssh
+
+sudo !!
+
+
+rubyping sweep
+
+f
