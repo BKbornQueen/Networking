@@ -1,0 +1,129 @@
+Screenshot tool to copy
+	copy image to clipboard
+Gorgas Socket Manipulation (GPM) 
+XX OCT 2023 
+Start Time: 1300 
+Duration: 4 hours
+Type of Operation: Socket Programming for Datagram, IP, TCP
+Objective: Gorgas Cyber Forces are preparing for an upcoming mission and have requested assistance with packet manipulation. They need to send custom message to allied forces throughout the region; however, they currently do not have anyone available that understands how. Using Python your team is required to complete each of the following tasks (Specific details for each task are identified in the challenge):
+    • Utilize sockets and craft a custom Datagram Socket Message Sender
+    • Utilize sockets and craft a custom Stream Socket Message Sender
+    • Utilize sockets and craft a custom Raw IPv4 Sockets
+    • Utilize sockets and craft a custom Raw IPv4 TCP Sockets
+Tools/Techniques: Python3, Wireshark/TCPDump
+Scenario Credentials: FLAG = raw_packet_start
+Prior Approvals: Prior to completing each of the four tasks, ensure you understand the various items of the script you developed.
+Saved Socket Scripts
+stream_sock.py
+dgram_sock.py
+raw_sock.py (ipraw
+tcp_raw.py (tcpraw)
+
+→ T1: INTERNET_HOST *** Blue-Internet_Host eth0 – 10.10.0.40
+-→ T2: BLUE_DMZ_Host *** Blue_DMZ_Host-1  eth0 – 172.16.1.15
+Target Section:
+T1
+Hostname: INTERNET_HOST
+IP: PROVIDED FLOAT IP
+OS: Linux
+Creds: PROVIDED CREDENTIALS
+Last Known SSH Port: 22
+PSP: none
+Malware: none
+Action: Send a Datagram Socket Message to this host
+T2
+Hostname: BLUE_DMZ_Host-1
+IP: 172.16.1.15
+OS: unknown
+Creds:unknown
+Last Known SSH Port: unknown
+PSP: Unknown
+Malware: Unknown
+Action: Send a Stream Socket Message to this host
+
+
+Address families
+socket.ADDFAM, socket.ADDFAM, socket.ADDFAM
+AF_INET*, AF_INET6, AF_UNIX
+
+socket functions
+socket.connect(), socket.close()
+
+struct.pack
+
+headers
+
+socket.sendto
+
+ipaddr port
+
+bytes-like object
+
+
+Modify a Stream Socket script - 
+modify only the ipaddr, port and message field
+867-5309
+port 5309
+message Jenny Hint remove the new line character /n from the message as it only wants Jenny to appear
+NO NEED to nc to open the listening port as it will already be open on the target device for you and this excercise
+
+
+Modify a Datagram Socket script - 
+modify only the ipaddr, port and message field
+use local loopback address when sending a message to the local device you are operating from 0.0.0.0
+
+Modify IP RAW Socket Script
+Modify 6 sections only src_ip = “” , dst_ip = “” , ip header, tcp header, flags and messages
+modify both header fields variables
+	ip header field
+	tcp header field
+flags 
+messages
+
+src_ip  		Source IP: 10.10.0.40	'ip[12:4] = 0x0a0a0028'
+
+dst_ip		Target IP: 172.16.1.15
+_________________________
+IPv4 Header Information
+_________________________
+ip_tos = 		DSCP: 24 (24*4=96 or a 2 bit shift is decimal 96
+			**toggle the binary ones on the calculator for the given DSCP 
+			to account for the ECN shift)
+
+ip_id = 		IP ID: 1984
+
+ip_proto = 16	Protocol: CHAOS		***(CHAOS is decimal number 16)
+
+____________________________
+Message
+____________________________
+message = b’Glaspie’
+
+sudo tcpdump -XXvvn 'ip[12:4] = 0x0a0a0028'
+Modify TCP RAW Socket Script
+src_ip  		Source IP: 10.10.0.40	'ip[12:4] = 0x0a0a0028'
+
+dst_ip		Target IP: 172.16.1.15
+
+________________________
+IPv4 Header Information
+________________________
+ip_id 		IP ID: 2020
+
+_________________________
+TCP Header
+_________________________
+tcp_src = 		TCP Src port: 54321 
+
+tcp_dst = 		TCP Dst port: 1234
+ 
+tcp_seq = 		SEQ Number: 90210
+
+tcp_ack_seq = 	ACK Number: 30905
+**********_________________
+
+tcp_syn = 		TCP flag: SYN
+___________________________
+Message
+___________________________
+message = b’Glaspie’
