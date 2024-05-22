@@ -127,3 +127,18 @@ ___________________________
 Message
 ___________________________
 message = b’Glaspie’
+
+____________________________
+******
+ip_tos = 		DSCP: 24 (24*4=96 or a 2 bit shift is decimal 96
+			**toggle the binary ones on the calculator for the given DSCP 
+			to account for the ECN shift)
+*******
+
+BIT SWITCHING/SHIFTING 
+DSPC and the ECN two bit shifting
+
+EX.
+decimal 24 as the DSPC
+equates to 
+decimal 96 as the ip_tos field entry within the ip header for tcp_raw.py
