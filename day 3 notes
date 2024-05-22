@@ -1,0 +1,572 @@
+Day 3 Sockets
+BLUF SOCKET USE:
+5 Steps to Socket Use via terminator/cmdline linux
+	Step one: author and modify the script
+		only change the ip and port and the messages
+			stream and datagram
+		only change ip and tcp header variables/flags and messages
+	Step two: add execute permissions to the new file
+		chmod +x  	OR 	chmod 777
+	Step three: open the listening port on the appropriate device using nc
+		nc -lvp <ListeningPort#TCP> 	OR 	nc -luvp <ListeningPort#UDP>
+	Step four: run the script (ensure she bang line is in script) 	#!/usr/bin/python3
+		./<scriptname.py>	OR 	sudo ./<scriptname.py>
+	Step five: tcpdump desired packet info (based on script modifications) always use sudo (raw sockets
+		sudo tcpdump -XXvvn ‘options’
+	       	dgram ex. Sudo tcpdump -Xxvvn ‘ip[12:4] = 0x0a0a0a0a’
+	       	raw     ex. Sudo tcpdump -Xxvvn ‘tcp[0:2]=2025’
+	Stream and datagram is sending and receiving flags no need to tcpdump
+
+3 Socket types
+	Stream
+	Datagram
+	Raw (must use sudo)
+		ip raw (modify only ip header)
+		tcp raw (must modify ip and tcp header for this one)
+		
+	
+		
+
+Socket Types
+    • Stream Sockets - Connection oriented and sequenced; methods for connection establishment and tear-down. Used with TCP, SCTP, and Bluetooth.
+    • Datagram Sockets - Connectionless; designed for quickly sending and receiving data. Used with UDP.
+    • RAW Sockets - Direct sending and receiving of IP packets without automatic protocol-specific formatting.
+
+User Space vs. Kernel Space Sockets
+    • User Space Sockets
+        ◦ Stream Sockets
+        ◦ Datagram Sockets
+    • Kernel Space Sockets
+        ◦ RAW Sockets
+            ▪ operate within the Kernel Space
+            ▪ 	must sudo with python3
+Socket Creation and Privilege Level
+    • User Space Sockets - The most common sockets that do not require elevated privileges to perform actions on behalf of user applications.
+    • Kernel Space Sockets - Attempts to access hardware directly on behalf of a user application to either prevent encapsulation/decapsulation or to create packets from scratch, which requires elevated privileges.
+User Space Applications/Sockets
+    • Using tcpdump or wireshark to read a file
+    • Using nmap with no switches
+    • Using netcat to connect to a listener
+    • Using netcat to create a listener above the well known port range (1024+)
+    • Using /dev/tcp or /dev/udp to transmit data
+Kernel Space Applications/Sockets
+    • Using tcpdump or wireshark to capture packets on the wire
+    • Using nmap for OS identification or to set specific flags when scanning
+    • Using netcat to create a listener in the well known port range (0 - 1023)
+Well known ports can be manipulated so verify that the port is in fact not nefarious
+How Imports Work
+Must be imported each time and cannot be simply called later in the script
+    • import {module}
+    • import {module} as {name}
+    • 
+can work within the program and does not have to be called on each time use is needed
+    • from {module} import *
+    • from {module} import {function}
+    • from {module} import {function} as {name}
+ 3 parameters for every socket
+stream and datagram sockets no need to desginate the protocol
+raw sockets protocol must be designated
+Network Programming with Python3
+    • Network sockets primarily use the Python3 Socket library and socket.socket function.
+import socket
+  s = socket.socket(socket.FAMILY, socket.TYPE, socket.PROTOCOL)
+The socket.socket Function
+    • Inside the socket.socket. function, you have these arguments, in order:
+socket.socket( *family*, *type*, *proto* )
+    • family: AF_INET*, AF_INET6, AF_UNIX
+    • type: SOCK_STREAM*, SOCK_DGRAM, SOCK_RAW
+    • proto: 0*, IPPROTO_TCP, IPPROTO_UDP, IPPROTO_IP, IPPROTO_ICMP, IPPROTO_RAW
+______________________________________________________________
+
+*** open vi editor and write new file (new_name.py)
+vi stream_sock.py
+*** Enter into insert mode*
+i
+*** Exit insert mode
+ctrl c
+*** write,save and force quit (shift semicolon(to get colon) wq!)
+ :wq!
+*** add a she bang line to avoid calling on python3
+#!/usr/bin/python3
+
+Import Stream Socket Script
+
+#!/usr/bin/python3
+
+# This can also be accomplished by using s = socket.socket() due to AF_INET and SOCK_STREAM being defaults
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+ipaddr = '127.0.0.1'
+port = 1111
+
+s.connect((ipaddr, port))
+
+# To send a string as a bytes-like object, add the prefix b to the string. \n is used to go to the next line (hit enter)
+s.send(b'Message\n')
+
+# It is recommended that the buffersize used with recvfrom is a power of 2 and not a very large number of bits
+data, conn = s.recvfrom(1024)
+
+# In order to receive a message that is sent as a bytes-like-object you must decode into utf-8 (default)
+print(data.decode('utf-8'))
+
+s.close()
+Import Sockets use:
+tcp
+only change the ip and port and the messages
+ctrl shift v  *** must use ctrl shift to use hotkeys in vi editor
+alt f4 *** removes the classification banner from the screen so you can full view the screen
+ensure within the program the ip is where you want to connect to.
+Notice where you are located and where you are actually trying to connect to
+On your local machine use the loopback address to make connections to yourself
+Notice where you are located, your script must contain the ip you are trying to reach
+	ex. You are on host1 and want to reach host2 then your script must contain the ip of host2
+
+when opening a netcat listening port tcp is the defaults
+ex. 
+nc -lvp 1111
+
+
+
+Import Socket UDP Dgram
+UDP Dgram Client Script
+
+import socket
+
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+ipaddr = '127.0.0.1'
+port = 2222
+
+# To send a string as a bytes-like object, add the prefix b to the string. \n is used to go to the next line (hit enter)
+s.sendto(b'Message\n', (ipaddr,port))
+
+# It is recommended that the buffersize used with recvfrom is a power of 2 and not a very large number of bits
+response, conn = s.recvfrom(1024)
+
+# In order to receive a message that is sent as a bytes-like-object you must decode into utf-8 (default)
+print(response.decode())
+
+
+
+
+When opening a listening port on nc must designate the use of udp
+Ex.
+nc -luvp 2222
+Dgram TCPDump
+sudo tcpdump -Xxvvn ‘ip[12:4] = 0x0a0a0a0a’
+
+
+
+
+
+
+
+RAW Sockets
+socket.AF_INET indicates ipv4
+source ip does not matter can be used as an obfuscationtool
+inputs must be in decimal
+B = bytes
+H  = half word or 2 bytes
+4s = word or 4 bytes 
+
+
+----
+#!/usr/bin/python3
+# For building the socket
+import socket
+# For system level commands
+import sys
+# For establishing the packet structure (Used later on), this will allow direct access to the methods and functions in the struct module
+from struct import pack
+# For encoding
+import base64    # base64 module
+import binascii    # binascii module
+# Create a raw socket.
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_RAW)
+except socket.error as msg:
+    print(msg)
+    sys.exit() 
+# 0 or IPPROTO_TCP for STREAM and 0 or IPPROTO_UDP for DGRAM. (man ip7). For SOCK_RAW you may specify a valid IANA IP protocol defined in RFC 1700 assigned numbers.
+# IPPROTO_IP creates a socket that sends/receives raw data for IPv4-based protocols (TCP, UDP, etc). It will handle the IP headers for you, but you are responsible for processing/creating additional protocol data inside the IP payload.
+# IPPROTO_RAW creates a socket that sends/receives raw data for any kind of protocol. It will not handle any headers for you, you are responsible for processing/creating all payload data, including IP and additional headers. (link)
+packet = ''
+src_ip = "127.0.0.1" 
+dst_ip = "127.0.0.1" 
+
+
+
+
+heaader variables and header ips make no changes to gray variables
+
+##################
+##Build Packet Header##
+##################
+# Lets add the IPv4 header information
+# This is normally 0x45 or 69 for Version and Internet Header Length
+ip_ver_ihl =
+# This combines the DSCP and ECN feilds.  Type of service/QoS
+ip_tos =
+# The kernel will fill in the actually length of the packet
+ip_len = 0
+# This sets the IP Identification for the packet. 1-65535
+ip_id =
+# This sets the RES/DF/MF flags and fragmentation offset
+ip_frag =
+# This determines the TTL of the packet when leaving the machine. 1-255
+ip_ttl =
+# This sets the IP protocol to 16 (CHAOS) (reference IANA) Any other protocol it will expect additional headers to be created.
+ip_proto =
+# The kernel will fill in the checksum for the packet
+ip_check = 0
+# inet_aton(string) will convert an IP address to a 32 bit binary number
+ip_srcadd = socket.inet_aton(src_ip)
+ip_dstadd = socket.inet_aton(dst_ip)
+
+#################
+## Pack the IP Header ##
+#################
+# This portion creates the header by packing the above variables into a structure. The ! in the string means 'Big-Endian' network order, while the code following specifies how to store the info. Endian explained. Refer to link for character meaning.
+ip_header = pack('!BBHHHBBH4s4s' , ip_ver_ihl, ip_tos, ip_len, ip_id, ip_frag, ip_ttl, ip_proto, ip_check, ip_srcadd, ip_dstadd)
+
+##########
+##Message##
+##########
+# Your custom protocol fields or data. We are going to just insert data here. Add your message where the "?" is. Ensure you obfuscate it though...don't want any clear text messages being spotted! You can encode with various data encodings. Base64, binascii
+message = b'last_name'                  #This should be the student's last name per the prompt
+hidden_msg = binascii.hexlify(message)  #Students can choose which encodeing they want to use.
+# final packet creation
+packet = ip_header + hidden_msg
+# Send the packet. Sendto is used when we do not already have a socket connection. Sendall or send if we do.
+s.sendto(packet, (dst_ip, 0))
+# socket.send is a low-level method and basically just the C/syscall method send(3) / send(2). It can send less bytes than you requested, but returns the number of bytes sent.
+# socket.sendall is a high-level Python-only method that sends the entire buffer you pass or throws an exception. It does that by calling socket.send until everything has been sent or an error occurs.
+----
+
+TCP RAW
+----
+#!/usr/bin/python3
+# For building the socket
+import socket
+# For system level commands
+import sys
+# For doing an array in the TCP checksum
+import array
+# For establishing the packet structure (Used later on), this will allow direct access to the methods and functions in the struct module
+from struct import pack
+# For encoding
+import base64    # base64 module
+import binascii    # binascii module
+# Create a raw socket.
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_RAW)
+except socket.error as msg:
+    print(msg)
+    sys.exit() 
+# 0 or IPPROTO_TCP for STREAM and 0 or IPPROTO_UDP for DGRAM. (man ip7). For SOCK_RAW you may specify a valid IANA IP protocol defined in RFC 1700 assigned numbers.
+# IPPROTO_IP creates a socket that sends/receives raw data for IPv4-based protocols (TCP, UDP, etc). It will handle the IP headers for you, but you are responsible for processing/creating additional protocol data inside the IP payload.
+# IPPROTO_RAW creates a socket that sends/receives raw data for any kind of protocol. It will not handle any headers for you, you are responsible for processing/creating all payload data, including IP and additional headers. (link)
+
+src_ip = "127.0.0.1"
+dst_ip = "127.0.0.1"
+
+##################
+##Build Packet Header##
+##################
+# Lets add the IPv4 header information
+# This is normally 0x45 or 69 for Version and Internet Header Length
+ip_ver_ihl =
+# This combines the DSCP and ECN feilds.  Type of service/QoS
+ip_tos =
+# The kernel will fill in the actually length of the packet
+ip_len = 0
+# This sets the IP Identification for the packet. 1-65535
+ip_id =
+# This sets the RES/DF/MF flags and fragmentation offset
+ip_frag =
+# This determines the TTL of the packet when leaving the machine. 1-255
+ip_ttl =
+# This sets the IP protocol to 16 (CHAOS) (reference IANA) Any other protocol it will expect additional headers to be created.
+ip_proto =
+# The kernel will fill in the checksum for the packet
+ip_check = 0
+# inet_aton(string) will convert an IP address to a 32 bit binary number
+ip_srcadd = socket.inet_aton(src_ip)
+ip_dstadd = socket.inet_aton(dst_ip)
+
+#################
+## Pack the IP Header ##
+#################
+# This portion creates the header by packing the above variables into a structure. The ! in the string means 'Big-Endian' network order, while the code following specifies how to store the info. Endian explained. Refer to link for character meaning.
+
+ip_header = pack('!BBHHHBBH4s4s' , ip_ver_ihl, ip_tos, ip_len, ip_id, ip_frag, ip_ttl, ip_proto, ip_check, ip_srcadd, ip_dstadd)
+
+################
+##Build TCP Header##
+################
+# source port. 1-65535
+tcp_src =
+# destination port. 1-65535
+tcp_dst =
+# sequence number. 1-4294967296
+tcp_seq =
+# tcp ack sequence number. 1-4294967296
+tcp_ack_seq =
+# can optionaly set the value of the offset and reserve. Offset is from 5 to 15. RES is normally 0.
+#tcp_off_res =
+# data offset specifying the size of tcp header * 4 which is 20
+tcp_data_off =
+# the 3 reserve bits + ns flag in reserve field
+tcp_reserve =
+# Combine the left shifted 4 bit tcp offset and the reserve field
+tcp_off_res = (tcp_data_off << 4) + tcp_reserve   
+# can optionally just set the value of the TCP flags
+#tcp_flags =
+# Tcp flags by bit starting from right to left
+tcp_fin = 0                    # Finished
+tcp_syn = 0                    # Synchronization
+tcp_rst = 0                    # Reset
+tcp_psh = 0                    # Push
+tcp_ack = 0                    # Acknowledgement
+tcp_urg = 0                    # Urgent
+tcp_ece = 0                    # Explicit Congestion Notification Echo
+tcp_cwr = 0                    # Congestion Window Reduced
+# Combine the tcp flags by left shifting the bit locations and adding the bits together
+tcp_flags = tcp_fin + (tcp_syn << 1) + (tcp_rst << 2) + (tcp_psh << 3) + (tcp_ack << 4) + (tcp_urg << 5) + (tcp_ece << 6) + (tcp_cwr << 7)
+# maximum allowed window size reordered to network order. 1-65535 (socket.htons is deprecated)
+tcp_win =
+# tcp checksum which will be calculated later on
+tcp_chk =
+# urgent pointer only if urg flag is set
+tcp_urg_ptr =
+
+# The ! in the pack format string means network order
+tcp_hdr = pack('!HHLLBBHHH', tcp_src, tcp_dst, tcp_seq, tcp_ack_seq, tcp_off_res, tcp_flags, tcp_win, tcp_chk, tcp_urg_ptr)
+
+##########
+##Message##
+##########
+
+# Your custom protocol fields or data. We are going to just insert data here.
+# Ensure you obfuscate it though...don't want any clear text messages being spotted!
+# You can encode various data encodings. Base64, binascii
+
+message = b'last_name'                                    # This should be the student's last name per the prompt
+hidden_msg = base64.b64encode(message)                    # base64.b64encode will encode the message to Base 64
+
+######################
+##Create the Pseudo Header##
+######################
+
+# After you create the tcp header, create the pseudo header for the tcp checksum.
+
+src_address = socket.inet_aton(src_ip)
+dst_address = socket.inet_aton(dst_ip)
+reserved = 0
+protocol = socket.IPPROTO_TCP
+tcp_length = len(tcp_hdr) + len(hidden_msg)
+
+#####################
+##Pack the Pseudo Header##
+#####################
+
+ps_hdr = pack('!4s4sBBH', src_address, dst_address, reserved, protocol, tcp_length)
+ps_hdr = ps_hdr + tcp_hdr + hidden_msg
+
+#########################
+##Define the Checksum Function##
+#########################
+
+def checksum(data):
+        if len(data) % 2 != 0:
+                data += b'\0'
+        res = sum(array.array("H", data))
+        res = (res >> 16) + (res & 0xffff)
+        res += res >> 16
+        return (~res) & 0xffff
+
+tcp_chk = checksum(ps_hdr)
+
+##############
+##Final TCP Pack##
+##############
+
+# Pack the tcp header to fill in the correct checksum - remember checksum is NOT in network byte order
+tcp_hdr = pack('!HHLLBBH', tcp_src, tcp_dst, tcp_seq, tcp_ack_seq, tcp_off_res, tcp_flags, tcp_win) + pack('H', tcp_chk) + pack('!H', tcp_urg_ptr)
+
+# Combine all of the headers and the user data
+packet = ip_header + tcp_hdr + hidden_msg
+
+# s.connect((dst_ip, port)) # typically used for TCP
+# s.send(packet)
+
+# Send the packet. Sendto is used when we do not already have a socket connection. Sendall or send if we do.
+s.sendto(packet, (dst_ip, 0))
+
+# socket.send is a low-level method and basically just the C/syscall method send(3) / send(2). It can send fewer bytes than you requested, but returns the number of bytes sent.
+#socket.sendall ﻿is a high-level Python-only method that sends the entire buffer you pass or throws an exception. It does that by calling socket.send ﻿ until everything has been sent or an error occurs.
+----
+loop back no funciona con esto raw sockets
+the traffic will be missed
+sudo must be used for tcpdump because raw sockets operate within kernal mode so elevated permissions are required
+sudo tcpdump -Xxvvn ‘tcp[0:2]=2025’ 
+
+
+m
+
+
+Byte Number
+Field Name
+Bit Range
+Length
+Description
+0-1
+Source Port
+0-15
+16 bits
+Specifies the port that localhost is listening on for traffic during this communication.
+2-3
+Destination Port
+16-31
+16 bits
+Specifies the port on the receiving(destination) host that it is listening on for this communication.
+4-7
+Sequence Number
+32-63
+32 bits
+If SYN flag set: this is the initial(starting) sequence number; If SYN flag is not set: this is the sequence number of the current segment that has incremented from the starting sequence number.
+8-11
+Acknowledgement Number (if ACK is set)
+64-95
+32 bits
+If ACK flag is set, it specifies the next sequence number the sender is expecting. Sender’s Sequence Number +1.
+12
+Data Offset
+96-99
+High 4 bits
+The size of TCP header in 32-bit WORDS. Minimum=5, Max=15. Used if there are TCP options.
+12
+Reserved
+100-102
+Low 3 bits
+Reserved for future use and should be set to zero.
+12
+NS
+103
+Low 1 bit
+Optional addition to the L3 ECN. Reference RFC 3540.
+13
+Flags
+104-111
+8 bits
+Control bits: CWR, ECE, URG, ACK, PSH, RST, SYN, FIN
+14-15
+Window Size
+112-127
+16 bits
+Size (in bytes) that this host is able to receive. This can be different on each end and can change during the course of the connection. Reference Wikipedia (Flow Control) (Window Scaling)
+16-17
+Checksum
+128-143
+16 bits
+Calculation done using the TCP header, Payload, and the Pseudo-Header (Source IP, Destination IP, and Protocol number (0x06))
+18-19
+Urgent Pointer (if URG is set)
+144-159
+16 bits
+If URG is set then this is an offset (range) from the sequence number indicating the last urgent data byte.
+20-59
+Options
+variable
+0-320 bits and divisible by 32
+Variable options. Reference www.networksorcery.com for examples.
+
+
+TCP segments will have the Protocol field set to 6 in the IPv4 Header or the Next Header field set to 6 in the IPv6 Header.
+
+Ethernet Header:
+        ◦ 00 1f 29 5e 4d 26 is the destination MAC
+        ◦ 00 50 56 bb 3a a0 is the source MAC
+        ◦ 08 00 is the ethertype for IPv4
+    • IPv4 Header:
+        ◦ 45 to identify the Version is 4 and the IHL is 5 which means the IP header is 20 bytes in length. (IHL x 4)
+        ◦ 00 is the DSCP. Used for Quality of Service (QoS).
+        ◦ 00 3c is the Total length of 60 bytes. This includes the 20 byte header and 40 bytes of payload.
+        ◦ 83 1b is the Identification field. Value is 33563.
+        ◦ 40 00 is the Flags and fragmentation offset field. This value has the Dont Fragement (DF) turned on and no fragmentation offset.
+            ▪ 80 00 is the value for the Reserved (Evil bit).
+            ▪ 20 00 to 3F FF is the range for the More Fragements (MF) bit and fragmentation offset.
+        ◦ 40 is the Time to Live field. Currently set to 64.
+        ◦ 06 is the Protocol field. Currently set to identify TCP.
+            ▪ 01 is for ICMPv4
+            ▪ 11 is for UDP
+        ◦ 15 0a is the Checksum field
+        ◦ c0 a8 14 46 is the source IP address. Currently set to 192.168.20.70.
+        ◦ 4a 7d 83 1b is the destination IP address. Currently set to 74.125.131.27.
+    • TCP Header:
+        ◦ d5 1d is the source port field. Currently set to 54557.
+        ◦ 00 19 is the destination port field. Currently set to 25.
+        ◦ 6b 7f　c7 2d is the sequence number field. Currently set to 1803536173.
+        ◦ 00 00 00 00 is the acknowledgement field. Currently set to 0.
+        ◦ a0 is the offset and reserved fields.
+            ▪ a is the offset field to identify the length of the TCP header. The a means that the TCP header is 40 bytes in length. (offset x 4)
+            ▪ 0 is the reserved field. This should always be 0.
+        ◦ 02 is the TCP flags field. Currently the SYN flag is set.
+            ▪ 80 is the Congestion window reduced (CWR) flag.
+            ▪ 40 is the ECN-Echo flag.
+            ▪ 20 is the Urgent pointer flag. If set then system should check Urgent pointer field.
+            ▪ 10 is the Acknowledgment flag. Used to inform sender of recieved data.
+            ▪ 08 is the Push flag. Used to inform recipient that data is in payload.
+            ▪ 04 is the Reset flag. Sent to close connection.
+            ▪ 02 is the Synchronize flag. Used to synchronize starting sequence numbers at the start of the conneciton during the 3-way handshake.
+            ▪ 01 is the Finish flag. Used to inform other end that connection is being terminated.
+        ◦ 72 10 is the window size field. Currently set to 29200.
+        ◦ a2 b5 is the checksum field.
+        ◦ 00 00 is the urgent pointer field. Should only be set if URG flag is on. This is not commonly used in modern networking. Currently set to 0.
+    • TCP Options:
+        ◦ 02 04　05 b4 is the Maximum segment size (MSS) option field. Used to determine the MSS for the communicaiton. Kind = 2. Length = 4. MSS = 1460
+        ◦ 04 02 is the Selective Acknoledgement (SACK) permitted option. Used to determine if SACK is permitted or not. Kind - 4. Length = 2.
+        ◦ 08 0a 0a 99 44 36 00 00 00 00 is the timestamps option. Used to measure TCP roundtrip time (RTT). Kind = 8. Length = 10. Timestamp = 177816630. Timestamp echo reply = 0.
+        ◦ 01 is the No-Operation (NOP) option. Kind = 1
+        ◦ 03 03 07 is the window scale option. Used to to increase the maximum window size from 65,535 bytes to 1 Gigabyte. Kind = 3. Length = 3. Shift count = 7 (multiply by 128).
+    • Anything after this will be payload.
+
+
+
+
+
+
+
+
+
+ENCODING AND DECODING
+
+Hex Encoding and Decoding
+Encode text to Hex:
+echo "Message" | xxd
+Endode file to Hex:
+xxd file.txt file-encoded.txt
+Decode file from Hex:
+xxd -r file-encoded.txt file-decoded.txt
+Python Hex Encoding
+import binascii
+message = b'Message'
+hidden_msg = binascii.hexlify(message)
+
+
+
+Base64 Encoding and Decoding
+Encode text to base64:
+echo "Message" | base64
+Endode file to Base64:
+base64 file.txt > file-encoded.txt
+Decode file from Base64:
+base64 -d file-encoded.txt > file-decoded.txt
+Python Base64 Encoding
+import base64
+message = b'Message'
+hidden_msg = base64.b64encode(message)
+
+MD5SUM
+echo “Message” | md5sum
