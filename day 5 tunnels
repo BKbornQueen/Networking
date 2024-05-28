@@ -1,0 +1,470 @@
+
+Teredo Tunneling
+    • RFC 4380
+    • Allows IPv4 clients to access IPv6 clients
+    • Encapsulates IPv6 packets within UDP
+    • Commonly used for devices behind NAT
+    • Uses the 2001:0000::/32 prefix
+ISATAP (PRIVATE LOCAL USE)
+    • Allows IPv6 hosts to communicate over an IPv4 network within a site (local network)
+    • Can be used over the internet for specific site-to-site communications.
+    • Generates a Link-Local address using its IPv4 address
+    • 192.168.199.99 → FE80::0000:5EFE:c0a8:c763
+Covert Channels
+    • Using common and legitimate protocols to transfer data in illegitimate ways.
+    • Unauthorized/hidden communication between entities.
+    • Utilizes computer system resources, mechanisms, or protocols.
+    • Transmits information contrary to design intent.
+    • Bypasses security, violates policies, leaks sensitive data.
+Type of Covert Channels
+    • Storage
+        ◦ Payload
+        ◦ Header
+            ▪ IP Header (TOS, IP ID, Flags + Fragmentation, and Options)
+            ▪ TCP Header (Reserved, URG Pointer, and Options)
+Type of Covert Channels
+    • Timing
+        ◦ Modifying transmission of legitimate traffic
+        ◦ Delaying packets between nodes
+        ◦ Watch TTL changes
+        ◦ Watch for variances between transmissions
+Common Protocols used with Covert Channels
+    • ICMP
+    • DNS
+    • HTTP
+How to Detect Covert Channels
+    • Host Analysis
+        ◦ Requires knowledge of each applications expected behavior.
+    • Network Analysis
+        ◦ A good understanding of your network and the common network protocols being used is the key
+    • Baselining of what is normal to detect what is abnormal
+Detecting Covert Channels with ICMP
+    • ICMP works with one request and one reply answer
+        ◦ Type 8 code 0 request
+        ◦ Type 0 code 0 answer
+    • Check for:
+        ◦ Payload imbalance
+            ▪ Changes to the ping packet size is cause for alarm
+        ◦ Request/responce imbalance
+            ▪ more responses than request then there is likely and command and control channel or nefarious actviity
+        ◦ Large payloads in response
+            ▪ oversized packet sizes
+		
+ICMP Covert Channel Tools
+    1. ptunnel
+    2. Loki
+    3. 007shell
+    4. ICMP Backdoor
+    5. B0CK
+    6. Hans
+Detecting Covert Channels with DNS
+    • DNS is a request/response protocol
+    • 1 request typically gets 1 response
+    • Payloads generally do no exceed 512 bytes
+    • Check for:
+        ◦ Request/response imbalances
+        ◦ Unusual payloads
+        ◦ Burstiness or continuous use
+            ▪ addresses and routes should be stored in cache
+            ▪ multiple fast paced requests in  a short period of time
+                • usually indicates automation or script
+
+DNS Covert Channel Tools
+    1. OzymanDNS
+    2. NSTX
+    3. dns2tcp
+    4. iodine
+    5. heyoka
+    6. dnscat2
+
+Detecting Covert Channels with HTTP
+    • Request/Response protocol to pull web content
+    • GET request may include .png, .exe, .(anything) files
+    • Can vary in sizes of payloads
+    • Typically "bursty" but not steady
+HTTP Covert Channel Tools
+    1. tunnelshell tools
+    2. HTTPTunnel
+    3. SirTunnel
+    4. go HTTP tunnel
+Steganography Injection
+    • Done by inserting message into the unused (whitespace) of the file, usually in a graphic
+    • Second most common method
+    • Adds size to the file
+    • Hard to detect unless you have original file
+    • tools:
+        ◦ StegHide
+Steganography Substitution
+    • Done by inserting message into the insignificant portion of the file
+    • Most common method used
+    • Elements within a digital medium are replaced with hidden information
+    • Example
+        ◦ Change color pallate (+1/-1)
+
+Steganography
+    • Hiding messages inside legitimate information objects
+        ◦ Methods:
+            ▪ Injection
+            ▪ Substitution
+            ▪ Propagation
+Steganography Propagation
+    • Generates a new file entirely
+    • Needs special software to manipulate file
+        ◦ tools:
+            ▪ StegSecret
+            ▪ HyDEn
+            ▪ Spammimic
+
+Secure Shell (SSH)
+SSH
+    • Various Implementations (v1 and v2)
+    • Provides authentication, encryption, and integrity.
+    • Allows remote terminal sessions
+    • Can enable X11 Forwarding
+    • Used for tunneling and port forwarding
+    • Proxy connections
+        ◦ legitimate with credentials
+        ◦ vs a MITM attack which is 
+SSH Architecture
+    • Client vs Server vs Session
+    • Keys:
+        ◦ User Key - Asymmetric public key used to identify the user to the server
+        ◦ Host Key - Asymmetric public key used to identify the server to the user
+        ◦ Session Key - Symmetric key created by the client and server to protect the session’s communication.
+
+SSH First Connect
+student@internet-host:~$ ssh student@172.16.82.106
+The authenticity of host '172.16.82.106 (172.16.82.106)' can't be established.
+ECDSA key fingerprint is SHA256:749QJCG1sf9zJWUm1LWdMWO8UACUU7UVgGJIoTT8ig0.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '172.16.82.106' (ECDSA) to the list of known hosts.
+student@172.16.82.106's password:
+student@blue-host-1:~$
+    • You will need to approve the Server Host (Public) Key
+    • Key is saved to /home/student/.ssh/known_hosts
+SSH Re-Connect
+ssh student@172.16.82.106
+student@172.16.82.106's password:
+student@blue-host-1:~$
+    • Further SSH connections to server will not prompt to save key as long as key does not change
+
+SSH Host key Changed
+ssh student@172.16.82.106
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ECDSA key sent by the remote host is
+SHA256:RO05vd7h1qmMmBum2IPgR8laxrkKmgPxuXPzMpfviNQ.
+Please contact your system administrator.
+Add correct host key in /home/student/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /home/student/.ssh/known_hosts:1
+remove with:
+ssh-keygen -f "/home/student/.ssh/known_hosts" -R "172.16.82.106"
+ECDSA host key for 172.16.82.106 has changed and you have requested strict checking.
+Host key verification failed.
+SSH Key Change Fix
+ssh-keygen -f "/home/student/.ssh/known_hosts" -R "172.16.82.106"
+    • Copy/Paste the ssh-geygen message to remove the Host key from the known_hosts file
+SSH Port Forwarding
+    • Creates channels using SSH-CONN protocol
+    • Allows for tunneling of other services through SSH
+    • Provides insecure services encryption
+SSH Options
+    • -L - Creates a port on the client mapped to a ip:port via the server
+    • -D - Creates a port on the client and sets up a SOCKS4 proxy tunnel where the target ip:port is specified dynamically (proxychains port 9050)
+    • -R - Creates the port on the server mapped to a ip:port via the client
+    • -NT - Do not execute a remote command and disable pseudo-tty (will hang window)
+Local Port Forwarding
+ssh -p <optional alt port> <user>@<server ip> -L <local bind port>:<tgt ip>:<tgt port> -NT
+	*** the order the actions actually occur but input in this order is not 	***required -L with options can come first or second
+
+or
+
+ssh -L <local bind port>:<tgt ip>:<tgt port> -p <alt port> <user>@<server ip> -NT
+	internally 0.0.0.0 indicates allow any ip on the network, locally it is the 	wildcard, therefore do not use it for the loopback for local port bind
+	you can use the local hostname
+The input order does not matter as long as the required data is with -L
+Local Port Forward to localhost of server *** Not ideal we can just ssh straight there instead no need for a tunnel
+Internet_Host:
+ssh student@172.16.1.15 -L 1122:localhost:22
+or
+ssh -L 1122:localhost:22 student@172.16.1.15
+Internet_Host:
+ssh student@localhost -p 1122
+Blue_DMZ_Host-1~$
+Local Port Forward to localhost of server $$$ Actually Useful, obfuscation using ssh through a telnet port Not authenticating to  Local Host aunthenticating to Blue DMZ host 1
+Internet_Host:
+ssh student@172.16.1.15 -L 1123:localhost:23
+or
+ssh -L 1123:localhost:23 student@172.16.1.15
+Internet_Host:
+telnet localhost 1123
+Blue_DMZ_Host-1~$
+
+Local Port Forward to localhost of server *** DoNOTforce close
+Use command-line tool like curl to view a webpage or wget to retrieve data (creates a directory)
+Internet_Host:
+ssh student@172.16.1.15 -L 1180:localhost:80
+or
+ssh -L 1180:localhost:80 student@172.16.1.15
+Internet_Host:
+firefox http://localhost:1180
+{Webpage of Blue_DMZ_Host-1}
+
+Local Port Forward to remote target via server
+Internet_Host:
+ssh student@172.16.1.15 -L 2223:172.16.40.10:23
+or
+ssh -L 2223:172.16.40.10:23 student@172.16.1.15
+	ssh from local host to .15 and opens a local port forward on port 2223 and 	from .15 forward traffic to .10 on port 23
+	creating a link then giving directions to somewhere
+	local ssh connection to .15 is what can be sniffed
+	from the .15 to the .10 it is open unencrypted telnet traffic
+	test the connection by attempting to telnet to final destination
+Internet_Host:test the port, bannergrab to ensure the port is really running the valid service and not a different service
+telnet localhost 2223
+Blue_INT_DMZ_Host-1~$
+Local Port Forward to remote target via server
+
+Internet_Host:
+ssh student@172.16.1.15 -L 2280:172.16.40.10:80
+or
+ssh -L 2280:172.16.40.10:80 student@172.16.1.15
+
+Internet_Host:
+firefox http://localhost:2280
+{Webpage of Blue_INT_DMZ_Host-1}
+Forward through Tunnel
+Internet_Host:
+ssh student@172.16.1.15 -L 2222:172.16.40.10:22
+ssh student@localhost -p 2222 -L 3322:172.16.82.106:22
+ ** test if port 2222 is open on the .10 to see if you can ssh to the box
+Internet_Host:
+ssh student@localhost -p 3322
+Blue_Host-1~$
+Forward through Tunnel
+Internet_Host:
+ssh student@172.16.1.15 -L 2222:172.16.40.10:22
+ssh student@localhost -p 2222 -L 3323:172.16.82.106:23
+Internet_Host:
+ssh student@localhost -p 3323
+Blue_Host-1~$
+Forward through Tunnel
+
+Internet_Host:
+ssh student@172.16.1.15 -L 2222:172.16.40.10:22
+ssh student@localhost -p 2222 -L 3380:172.16.82.106:80
+Internet_Host:
+firefox http://localhost:3380
+{Webpage of Blue_Host-1}
+
+Dynamic Port Forwarding
+
+ssh <user>@<server ip> -p <alt port> -D <port> -NT
+or
+ssh -D <port> -p <alt port> <user>@<server ip> -NT
+    • Proxychains default port is 9050
+    • Creates a dynamic socks4 proxy that interacts alone, or with a previously established remote or local port forward. TCP only will not work on ping a UDP protocol
+    • Allows the use of scripts and other userspace programs through the tunnel.
+SSH Dynamic Port Forwarding 1-Step *** only one dynamic tunnel open at a time
+Internet_Host:
+ssh student@172.16.1.15 -D 9050
+or
+ssh -D 9050 student@172.16.1.15
+
+SSH Dynamic Port Forwarding 1-Step
+Internet_Host:
+proxychains ./scan.sh
+proxychains nmap -Pn 172.16.40.0/27 -p 21-23,80
+proxychains ssh student@172.16.40.10
+proxychains telnet 172.16.40.10
+proxychains wget -r http://172.16.40.10
+proxychains wget -r ftp://172.16.40.10
+Internet_Host:
+proxychains ./scan.sh
+proxychains nmap -Pn 172.16.82.96/27 -p 21-23,80
+proxychains ssh student@172.16.82.106
+proxychains telnet 172.16.82.106
+proxychains wget -r http://172.16.82.106
+proxychains wget -r ftp://172.16.82.10
+
+SSH Dynamic Port Forwarding 2-Step
+Internet_Host:
+ssh student@172.16.1.15 -L 2222:172.16.40.10:22
+or
+ssh -L 2222:172.16.40.10:22 student@172.16.1.15
+Internet_Host:
+ssh student@localhost -p 2222 -D 9050
+or
+ssh -D 9050 student@localhost -p 2222
+SSH Dynamic Port Forwarding 2-Step
+Internet_Host:
+proxychains ./scan.sh
+proxychains nmap -Pn 172.16.82.96/27 -p 21-23,80
+proxychains ssh student@172.16.82.106
+proxychains telnet 172.16.82.106
+proxychains wget -r http://172.16.82.106
+proxychains wget -r ftp://172.16.82.106
+Local is put it on the box I am on
+Remote Port Forwarding put it on the box I connect to
+ssh -p <optional alt port> <user>@<server ip> -R <remote bind port>:<tgt ip>:<tgt port> -NT
+
+or
+
+ssh -R <remote bind port>:<tgt ip>:<tgt port> -p <alt port> <user>@<server ip> -NT
+
+-R box that you ssh to
+-L box that you are on
+ if a port is bound to something keep on sliding to the final destination bc this portion is hidden bc there is no drop out opening here
+ 
+Ex telnet to a remote box from your local host
+then ssh back to the local host and opening a remote port on the local host
+	-R 4422:127.0.0.1:rhp
+	remote box opens a rhp on the loca(you)host through the creation of a tunneling
+
+Remote Port Forwarding from localhost of client
+Blue_DMZ_Host-1:
+ssh student@10.10.0.40 -R 4422:localhost:22
+or
+ssh -R 4422:localhost:22 student@10.10.0.40
+Internet_Host:
+ssh student@localhost -p 4422
+Blue_DMZ_Host-1~$
+Remote Port Forwarding from localhost of client
+Blue_DMZ_Host-1:
+ssh student@10.10.0.40 -R 4423:localhost:23
+or
+ssh -R 4423:localhost:23 student@10.10.0.40
+Internet_Host:
+telnet localhost 4423
+Blue_DMZ_Host-1~$
+Remote Port Forwarding from localhost of client
+Blue_DMZ_Host-1:
+ssh student@10.10.0.40 -R 4480:localhost:80
+or
+ssh -R 4480:localhost:80 student@10.10.0.40
+Internet_Host:
+firefox http://localhost:4480
+{Webpage of Blue_DMZ_Host-1}
+Remote Port Forwarding to remote target via client
+Blue_DMZ_Host-1:
+ssh student@10.10.0.40 -R 5522:172.16.40.10:22
+or
+ssh -R 5522:172.16.40.10:22 student@10.10.0.40
+Internet_Host:
+ssh student@localhost -p 5522
+Blue_INT_DMZ_Host-1~$
+Remote Port Forwarding to remote target via client
+Blue_DMZ_Host-1:
+ssh student@10.10.0.40 -R 5523:172.16.40.10:23
+or
+ssh -R 5523:172.16.40.10:23 student@10.10.0.40
+Internet_Host:
+telnet localhost 5523
+Blue_INT_DMZ_Host-1~$
+Remote Port Forwarding to remote target via client
+Blue_DMZ_Host-1:
+ssh student@10.10.0.40 -R 5580:172.16.40.10:80
+or
+ssh -R 5580:172.16.40.10:80 student@10.10.0.40
+Internet_Host:
+firefox http://localhost:5580
+{Webpage of Blue_INT_DMZ_Host-1}
+Bridging Local and Remote Port Forwarding
+Internet_Host:
+ssh student@172.16.1.15 -L 2223:172.16.40.10:23 -NT
+or
+ssh -L 2223:172.16.40.10:23 student@172.16.1.15 -NT
+Internet_Host:
+telnet localhost 2223
+Blue_INT_DMZ_Host-1~$
+Bridging Local and Remote Port Forwarding
+Blue_INT_DMZ_Host-1:
+ssh student@172.16.1.15 -R 1122:localhost:22
+or
+ssh -R 1122:localhost:22 student@172.16.1.15
+Bridging Local and Remote Port Forwarding
+Internet_Host:
+ssh student@172.16.1.15 -L 2222:localhost:1122
+or
+ssh -L 2222:localhost:1122 student@172.16.1.15
+Bridging Local and Remote Port Forwarding
+Internet_Host:
+ssh student@localhost -p 2222 -D 9050
+or
+ssh -D 9050 student@localhost -p 2222
+Bridging Local and Remote Port Forwarding
+Internet_Host:
+proxychains ./scan.sh
+proxychains nmap -Pn -sT 172.16.82.96/27 -p 21-23,80
+proxychains ssh student@172.16.82.106
+proxychains telnet 172.16.82.106
+proxychains wget -r http://172.16.82.106
+proxychains wget -r ftp://172.16.82.106
+D is always at home on the local machine 
+you can’t be dynamic in the streets it will 
+break up everything
+IH-Local Machine		       .15				.10
+A--->--->----->------>------>--->----B-------->----------->------->------C
+
+
+
+
+
+
+
+
+
+
+
+IH-Local Machine		       .15				  .10
+A------->------>------->------>-------B------->------>------->------>------C
+-L
+
+IH-Local Machine		       .15				  .10
+A-------←-----←------←-----←------B-------←-----←------←-----←-----C
+
+
+IH-Local Machine		       .15				  .10
+A------->------>------->------>-------B------->------>------->------>------C
+
+
+
+A----------------------------------------B-------------------------------------C
+
+
+A----------------------------------------B-------------------------------------C
+
+ssh to the box
+
+which proxychains
+which nc
+which nmap
+which tcpdump
+which telnet
+ip a
+	map any ips
+nmap ip/cidr -p 21-23,80 -T4 –open (shows open and established ports)
+ OR
+ss -ntlp (shows open ports)
+	127.0.0.1 is only available to the local host
+	0.0.0.0 is open to anyone
+
+ssh to any found ips and enumerate
+
+sudo -l
+sudo tcpdump
+ls
+
+*** no Nmap
+ssh <un@ip> -D 9050 -NT
+
+ssh <localun@ip>
+
+on john
+proxychains curl host *** works on the remote user
+
+proxychains hosname *** works locally
