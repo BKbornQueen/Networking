@@ -1,0 +1,104 @@
+
+T2 has 1steg.jpg on 
+	T2 connect to RELAY on TCP port 1234 to send the file. 
+Establish a Netcat relay on RELAY 
+	accept T2 onnection 
+	forward to T1. 
+On T1 Use steghide to decode the message. 
+	MD5SUM the message.
+
+T1
+
+Relay
+
+T2
+1steg.peg
+connect to port 1234
+
+______________________________________
+ssh student@10.50.33.159 -X
+External IP: 10.50.XXX.XXX (ALREADY PROVIDED) Internal IP: 10.10.0.40 (ALREADY PROVIDED)
+T1 local host – open listener, receive data, steghide, md5sum
+	open nc -lvp 1234
+	open nc -lvp 4321
+	open nc -lvp 6789
+	open nc -lvp 9876
+______________________
+RelayBLUE_INT_DMZ_HOST-1 172.16.40.10
+ssh <username>@<IP2>
+mkfifo mp1
+
+ls
+------LocalHost---- | ------InsiderPrivHost------
+nc -lvp 1111 < np1 | nc -lvp 1234> np1
+nc -lvp 1111 < np1 | nc -lvp 4321 > np1
+nc -lvp 1111 < np1 | nc -lvp 6789 > np1
+nc -lvp 1111 < np1 | nc -lvp 9876> np1
+
+_________________
+T2 Donovan Insider BLUE_HOST-4IP: 172.16.82.115
+ssh <username>@<IP2>
+ssh <username>@<IP3>
+nc <IP3B Port3B>
+	1steg.jpg
+	2steg.jpg
+	3steg.jpg
+	4steg.jpg
+
+Use the syntax: steghide extract -sf [image name] to extract the hidden message. Use password when prompted for a passphrase.
+
+
+nc 172.16.40.10 1111 > 1steg.jpg
+ls
+eom 1steg.jpg
+ls
+steghide extract -sf 1steg.jpg
+password
+cat <ExtractedFileName>
+cat <ExtractedFileName> | md5sum
+___________
+
+ssh student@172.16.40.10
+password
+mkfifo np1
+ls 
+nc -lvp 1111 < np1 | nc -lvp 1234 > np1
+
+
+nc -lvp 1111 < np1 | nc 172.16.82.115 6789 > np1
+
+
+Relay 1
+10
+Utilize the targets T2 and RELAY to develop the following netcat relays for use by Gorgan Cyber Forces. The use of names pipes should be utilized on RELAY:
+Syntax for steghide tool: 
+steghide extract -sf [image name] 
+Passphrase: password 
+    • The Donovian Insider provided a image called 1steg.jpg on T2 and is trying to connect to RELAY on TCP port 1234 to send the file. Establish a Netcat relay on RELAY to accept this connection and forward to T1. Once the images are downloaded you will use a command-line tool called steghide to extract the message. Perform an MD5SUM on this message to create flag1.
+    • File should be 89824 bytes in size. 
+
+
+
+Blue-Internet Host Local Machine
+nc 172.16.40.10 1111 > 1steg.jpg
+ls
+eom 1steg.jpg  (opens the file to a gui display)
+ls
+steghide extract -sf 1steg.jpg
+password
+cat <ExtractedFileName>
+cat <ExtractedFileName> | md5sum
+
+_____________
+Relay
+Blue-Int-DMZ-Host
+nc -lvp 1111 < np1 | nc -lvp 1234 > np1
+
+
+Relay2
+nc -lvp 1111 < np1 | nc -lvp 4321 > np1
+
+Relay3
+nc -lvp 1111 < np1 | nc 172.16.82.115 6789 > np1
+Relay4
+nc -lvp 1111 < np1 | nc 172.16.82.115 9876 > np1
