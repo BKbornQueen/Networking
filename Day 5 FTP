@@ -1,0 +1,77 @@
+active high port to high port client to server
+passive server to client
+ftp <ip>
+ftp use wget
+  wget -r ftp://<ip>
+
+passive ftp
+  proxychains ftp <ip>
+    password and username
+  passive
+  ls
+FTP
+active high port to high port client to server
+ftp <ip>
+	username and password
+	ls
+
+passive server to client
+ftp use wget
+  wget -r ftp://<ip>
+
+passive ftp
+  proxychains ftp <ip>
+    password and username
+  passive
+  ls
+SCP
+Who has the file
+and the target where you want to put the file
+SCP Options
+.  - Present working directory
+-v - verbose mode
+-P - alternate port
+-r - recursively copy an entire directory
+-3 - 3-way copy
+* - wildcard to grab everything
+SCP Syntax
+Download a file from a remote directory to a local directory
+$ scp student@172.16.82.106:secretstuff.txt /home/student
+Upload a file to a remote directory from a local directory
+$ scp secretstuff.txt student@172.16.82.106:/home/student
+Copy a file from a remote host to a separate remote host
+$ scp -3 student@172.16.82.106:/home/student/secretstuff.txt student@172.16.82.112:/home/student
+password:    password:
+SCP Syntax
+Recursive upload of a folder to remote
+$ scp -r folder/ student@172.16.82.106:
+Recursive download of a folder from remote
+$ scp -r student@172.16.82.106:folder/ .
+SCP Syntax w/ alternate SSHD
+Download a file from a remote directory to a local directory
+$ scp -P 1111 student@172.16.82.106:secretstuff.txt .
+Upload a file to a remote directory from a local directory
+$ scp -P 1111 secretstuff.txt student@172.16.82.106:
+SCP Syntax through a tunnel
+Create a local port forward to target device
+$ ssh student@172.16.82.106 -L 1111:localhost:22 -NT
+ 	(*** -NT locks out the terminal so you do not loose your tunnel)
+Download a file from a remote directory to a local directory
+$ scp -P 1111 student@localhost:secretstuff.txt /home/student
+Upload a file to a remote directory from a local directory
+$ scp -P 1111 secretstuff.txt student@localhost:/home/student
+SCP Syntax through a Dynamic Port forward
+Create a Dynamic Port Forward to target device
+$ ssh student@172.16.82.106 -D 9050 -NT
+Download a file from a remote directory to a local directory
+$ proxychains scp student@localhost:secretstuff.txt .
+Upload a file to a remote directory from a local directory
+$ proxychains scp secretstuff.txt student@localhost:
+local---------------------------.106-----------------------------------<private internal IP of target network>
+A--------------------------------B-------------------------------------------C
+
+Dynamic ssh from A to B
+			Now able to interact with C via proxy chain scp
+
+without the dynamic (-D option) a normal ssh would only be able to view and interact with box B
+Dynamic allows interactions beyond the directly connected(via ssh) box
