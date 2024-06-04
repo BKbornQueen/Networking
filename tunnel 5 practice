@@ -1,0 +1,33 @@
+
+tunnel 5
+-NT all tunnels
+open a separate tunnel to access tunnels, this prevents accidently closing your tunnel
+Authenticate then create
+access the tunneling
+	From IH using Local tunnel, service and loopback ip
+
+IH> ssh user@<ipA-Float> -D 9050 -NT    	*** dynamic tunnel from IH to A
+IH> ssh user@<ipA-Float> -L 1111:<ipB>:23	***Local PortForward tunnel authenticate to A create tunnel to B
+IH> telnet 127.0.0.1 1111			*** Direct access to B from IH via new tunnel 1111
+						*** Now on B
+*** Reverse tunnel back past the firewall from B to internal interface A 10.1.2.130
+*** if you use no user@ on ssh it will use the credentials of the user you are currently logged in as
+B> ssh <ipA-InternalIngressInterface> -R 2222:127.0.0.1:8976
+From B authenticate to A and open a reverse port on the direct reverse next hop interface A, creating a remote tunnel that allows A to access B via B’s existing service running on the discovered existing open port 8976
+created a remote reverse tunnel on A, so that A can access B via ssh on B’s existing 8976
+***? what box am I on????
+IH> ssh user@<ipA-Float> -L 3333:127.0.0.1:2222 **Direct access to B from IH via Reverse tunnel 2222 *** 
+***Authenticate to A, create/open Local port 3333 on IH via previously created tunnel 2222 to reach B
+IH> ssh user@127.0.0.1 -p 3333 -L 4444:<ExternalEgressIPC>:22 **Direct access to C from IH via **Local tunnel 3333
+**Athenticate\Access B via Local IH tunnel 3333 to reach B, then from B open a Local port forward on IH 4444 to reach C
+IH> ssh user@<loopback> -p 4444 -D 9050 -NT  *** close old dynamic tunnel and open new dynamic tunnel to C via 4444
+IH> ssh user@<loopback> -p 4444  -L 5555:<ExternalEgressIPD>:23
+**Athenticate\Access C via Local IH tunnel 4444 to reach C, then from C open a Local port forward on IH 5555 to reach D
+IH> telnet 127.0.0.1 5555			*** Direct access to D from IH via new tunnel 5555
+*** Reverse tunnel back past the firewall from D to internal interface C
+*** if you use no user@ on ssh it will use the credentials of the user you are currently logged in as
+D> ssh user@<ipC-InternalInterface> -R 6666:127.0.0.1:3597 *** Authenticate to C and create and open a remote port 6666 on C in order to reach back to D past the firewall using SSHD service on discovered established port 3597
+IH> ssh user@<loopback> -p 4444 -L 7777:<loopback>:6666 ***From IH tunnel 4444 to reach C, Authenticate to C’s 4444 tunnel on IH to reach C, then create/open a local port forward tunnel on IH 7777 to then reach then Reach D via previously created remote 6666 remote/reverse access tunnel that resides locally on C to then reach D
+*** creates IH to D tunnel
+IH> ssh user@<loopback> -p 7777  **use direct access tunnel from IH to D
+IH> ssh user@<loopback> -p 7777 -D 9050 -NT *** Dynamic tunnel from IH to D
