@@ -1,0 +1,233 @@
+Network map
+draw.io
+
+net recon methodology
+
+host discovery
+    • ruby ping sweep
+    • nmap scan if no ping
+
+port discovery
+    • nmap
+    • nc scan script
+
+port validation
+    • banner grabbing usind nc
+	nc <ip> <port#>
+
+ 
+
+follow on action based on ports found
+	
+	if 21 FTP [IP ADDR] connects to the ftpserver
+		ftp <ip>
+		passive
+		ls
+		get [filenam]
+	passive
+	ls
+	get [file name]
+	if 21 or 80 wget -r  iP_ADDRESS (or) wget -r ftp:/IP_ADDRESS (or) firefox
+		wget -r <http://<ip>>
+		wget -r <ftp://<ip>>
+			ls
+			cat
+	if 22 or 23 connet and passive recon
+
+scan methodology	
+nmap -Pn [IP Addr] -T4 -p 21-23,80
+
+quick scan ports 21-23, 80
+specific ports based on hints/clues found
+well known port range
+which tcpdump wireshark nmap telnet curl ping
+sudo which tcpdump wireshark nmap telnet curl ping
+
+
+	0-1023(actually scan 1-1023)
+chunks of 2000 or first 10000 ports (65535
+hail mary -scan all the ports (65535
+
+Passive Recon Methodology
+Italiciezewd/dolded words are commands
+
+hostname
+
+permisions (then do the which command, if sudo permissions use sudo, if not do not use it will be logged)
+sudo -l
+	what sudo access
+interfaces and subnets
+	ip a
+	ip addr
+	ifconfig
+neighbors (arp cache)
+	ip n
+	ip neigh
+	arp -a
+	show interface
+files of interest
+	find
+	fin / -iname hint* 2>/dev/null
+	find /
+other listening ports 
+	netstat -anop
+	ss -ntlp
+	ss -tlp
+	ss -nulp
+availbale tools
+	sudo which tcpdump wiershark nmap telnet get curl ping ssh 
+get
+curl
+ping
+ssh
+
+sudo !!
+
+
+rubyping sweep
+
+f
+
+
+
+
+
+
+net 2_student19
+password19
+
+Device type
+Hostname
+Interface type
+Interface IP
+Subnet Mask CIDR
+Routing Protocol, IP network and Network Name groupings
+Open ports
+Operating system type and versions
+
+interfaces and subnets
+	ip a
+	ip addr
+	ifconfig
+neighbors (arp cache)
+	ip n
+	ip neigh
+	arp -a
+	show interface
+
+
+
+Find interfaces, CIDR values for duckduckgo
+VYOS Commands
+	show interfaces
+	show ip route
+Use duckduckgo to find NetworkID
+
+Internal Given Host
+Red Internet Host
+
+From the local Machine ssh to the given internal host
+Enumerate this Internet boarder machine
+1) Available tools? For current user and elevated user?
+	which tcpdump wireshark nmap telnet wget curl ping ssh
+	sudo which tcpdump wireshark nmap telnet wget curl ping ssh
+
+2) familiarization
+	hostname
+	whoami
+	permissions
+		sudo -l
+3)Open Ports
+Ping Sweep
+	nmap -Pn -T4 <IP> -p 21-23, 80
+	nmap -Pn -T4 <IP> -p 1-9999
+	sudo nmap -Pn -T4 <IP> -p 21-23, 80
+	sudo nmap -Pn -T4 <IP> -p 1-9999
+for p in {1..1023}; do(echo >/dev/tcp/<IP>/$p) >/dev/null 2>&1 && echo "$p open"; done	
+for i in {1..254}; do (ping -c 1 172.16.82.$i 2>/dev/null | grep "bytes from" &) ; done
+sudo nmap -sP 172.16.82.96/27
+
+4) interface name and Net ID
+	ip a
+ x)protocol validation and listening ports
+	exec 3<>/dev/tcp/172.16.120.1/22; echo -e "" >&3; cat <&3
+	ss -ntlp
+	ss -tlp
+	ss -nulp
+
+6) Scan and Enumerate the discovered networks (repeat individually for every network and interface)
+	nmap -Pn -T4 <IP/CIDR> -p 21-23, 80
+	nmap -Pn -T4 <IP/CIDR> -p 1-9999
+	sudo nmap -Pn -T4 <IP/CIDR> -p 21-23, 80
+	sudo nmap -Pn -T4 <IP/CIDR> -p 1-9999
+for p in {1..1023}; do(echo >/dev/tcp/<IP/CIDR>/$p) >/dev/null 2>&1 && echo "$p open"; done	
+
+Course Title: Capstone
+Day: 13
+
+
+
+I. What we need to do:
+    • Gather initial information ( inital access ip address and port(s) )
+    • Determine the network range ( /16, /20, /24, /27 )
+    • Identify active machines ( ping or port scan )
+    • Discover open ports and access points ( port scan)
+    • Fingerprint the operating system ( banner grab ports or sniff traffic )
+    • Uncover services on ports ( banner grab open ports )
+    • Map the network ( physically draw network starting from your system and build a tree view )
+      
+
+II. How we go about doing it:
+1. Conduct passive recon on your(or remote) box (if needed)
+     a. ip addr (ipconfig/ifconfig)
+     b. ip neighbor (arp -a)
+     c. ss (netstat)
+     d. ps -ef
+     e. share folder
+     f. tcpdump/Wireshark
+     g. use 'which' or 'whereis' to identify any other programs installed on system.
+2. Conduct active recon (scan) from your box to find other systems on the same network.
+     a. ./scan.sh - scan from your box
+     b. proxychains ./scan.sh - scan thru dynamic tunnel to enumerate from proxy.
+3. Enumerate results you find on a map. (IP, ports, etc)
+     a. Create a tree view map with your system being the root and each system accessible from your box as branches.
+4. Interact with services you see (FTP, curl, wget, firefox, NC, etc).
+     a. FTP(21) or HTTP(s)(80/443) you can use
+         1. 'curl http://10.0.0.1' or 'curl ftp://10.0.0.1
+         2. 'wget -r http://10.0.0.1' or 'wget ftp://10.0.0.1
+     b. ssh (port 22)
+     c. telnet (23)
+     d. banner grab other ports
+         1. nc 10.0.0.1 1111
+         2. telnet 10.0.0.1 2222         
+5. Review data collected from the systems (review file information and clues)
+     a. systematically download all data to your system to analyze and record.
+6. Identify any possible pivot system(s) you can use to find more systems. (needs SSH or Telnet access)
+     a. does any system have either ssh or telnet open to pivot thru?
+7. Remote to pivot (if applicable)
+8. Conduct passive recon on the pivot box (same as step 1). Is it a viable pivot?
+9. (Back on your box) Build a tunnel to pivot (with -L or -R if needed)
+     a. Your-box$ ssh 1st-pivot@ip-address -L 1111:next-pivot-ip:22 -NT
+     b. Remote-box$ ssh 1st-pivot@ip-address -R 1111:localhost:22 -NT
+10. Build Dynamic Tunnel to pivot.
+     a. ssh -D 9050 net-pivot@localhost -p 1111 -NT
+11. Conduct active recon (scan through Proxychains) from your box to find other systems accessible from your new pivot.
+     a. proxychains ./scan.sh - scan thru dynamic tunnel to enumerate from proxy.
+12. Enumerate (map) new systems found. (IP, ports, etc)
+     a. Continue your tree view mapping but now map out new systems branching from your proxy.
+13. Interact with services you see using proxychains (FTP, curl, wget, NC, ssh, telnet, etc)
+     a. FTP(21) or HTTP(s)(80/443) you can use    
+         1. 'proxychains curl http://10.0.0.1' or 'proxychains curl ftp://10.0.0.1
+         2. 'proxychains wget -r http://10.0.0.1' or 'proxychains wget ftp://10.0.0.1
+     b. proxychains ssh (port 22)
+     c. proxychains telnet (23)
+     d. banner grab other ports
+          1. proxychains nc 10.0.0.1 1111
+2. proxychains telnet 10.0.0.1 2222      
+14. Repeat from step 5.
+
+III. Additional guidance:
+1.  Windows (terminal) management. You will have many tunnels open so you  need to keep it organized. Rename windows to help organize.
+2.  File management. You will pull many artifacts back to your system. We  need to organize them so you know where each file was pulled from and  relates to. (wget -r can help with this)
+3. Create a physical map of the network and markdown information you find (as you find them).
+4.  Take Op-notes on what you are doing, the systems you interfaced with,  the information you collected, tunnels you created, things you tried,  and things that may have failed
