@@ -1,0 +1,92 @@
+Capstone
+START FLAG: crowning achievement
+Floating IP of start pivot is: 10.50.37.126
+Hint:
+This system seems to be a pivot for the network and programming sections
+Dynamic Tunnel to Float IP 10.50.37.126
+
+ssh net2_student19@10.50.37.126
+	hostname : capstone-01
+	ss -ntlp : 80,22
+ip n 10.1.1.33,.125,.100 stale
+.119,.120 incomplete
+Reachable Hosts10.1.1.126,.11,.25
+ip a
+	eth0 10.1.1.30/25
+nmap
+10.1.1.0/25
+10.1.1.11:23,21 Capstone 02
+10.1.1.25:21
+10.1.1.30:80
+10.1.1.33:23,21,80
+	No Results: sudo -l, ping sweep, “/usr/share/cctc” no files found,
+which tcpdump wireshark nmap telnet wget curl ping ssh
+ssh net2_student19@10.50.37.126 -D 9050 -NT
+Use the .126 Dynamic tunnel to scan its network /24
+IH > proxychains ./scan.sh
+hosts 1-154
+Network 10.50.37.0/24
+.125 only 80 forbhidden
+.126 only 80
+.204 only 23, 80
+	This is the default webpage for the Linux OpStation
+	telnet 10.50.37.204
+		lin-ops login: *** need credentials do tcpdump
+		sudo tcpdump -Xxvvn ‘port23’
+Ports 23,21,80
+.13 
+.17 
+.19
+.20
+.26
+.28
+.32
+.38
+.49
+.57
+.60
+.80
+.81
+.101
+.116
+.119
+.120
+.127
+.137
+.150
+.153
+.172
+.185
+.193
+.212
+.217
+.227
+capstone01 internalIngressInterface .30
+	ip a
+	ip n
+	proxychains ./scan.sh of the newly discovered 10.1.1.0/25
+Telnet to discovered host(10.1.1.11) from IH through capstone 01(10.50.37.126) Dynamic tunnel via IH
+	Credentials net2_student19:password19
+  	Host discovery
+		ip a
+		Ruby Ping Sweep from Capstone 02 
+		for i in {1..254}; do (ping -c 1 10.1.1.$i 2>/dev/null | grep "bytes from" &) ; done
+			live hosts found .11 .5 .30 .33 .100 .125 .126
+		ip n
+			reachable hosts 
+			.126 nmap > ftp,ssh,telnet,http
+			.30 
+			stale hosts
+			.33 .25 .125 .100
+
+
+10.1.1.11 Capstone 2 telnet and ftp
+	ftp hint 
+		there is a webservice running on the port that corresponds with the RFC that governs Private IPv4 Addressing
+		there is a pcap in the share folder of this machine that you should look at
+
+
+.33
+RIPv2 seems to be running on 10.1.1.0/25 networking
+try to sniff out the traffic to find out what networks its advertising in its updates
+what you find will the ip address of the next environemnt pivot to access from you IH
