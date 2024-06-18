@@ -1,6 +1,43 @@
+Test 09July
+96 4th and 5th of July
+19June only
+_______________________________________________________________________
+JEGL-M-503
+JEGL-M-503
+________________________________________________________________________
+Jump Box
 
+    Student#: student20
 
+    Command: ssh student@10.50.38.161 -X
 
+    Password: password
+________________________________________________________________________
+FG
+	https://net.cybbh.io/public/networking/latest/index.html
+Miro Whiteboard	
+	https://miro.com/app/board/o9J_klSqCSY=/
+ctfd
+	http://networking-ctfd-1.server.vta:8000/resources
+	http://10.50.20.180:8000/
+_______________________________________________________________________
+
+________________________________________________________________________
+BPF Filters
+https://git.cybbh.space/net/public/-/blob/master/modules/networking/activities/1-Fundamentals/BPF_Syntax_Examples/bpf-syntax.adoc
+__________________________________________________________________________________________________
+Protocol Data Unit (PDU)
+
+ 5,6,7	Session-Application = Data
+
+     4 	Transport = Segment/Datagram
+
+     3 	Network = Packet
+
+     2 	Data Link = Frame
+
+     1 	Physical = Bit
+__________________________________________________________________________________________________
 
 
 Encapsulation and Decapsulation
@@ -8,7 +45,7 @@ Encapsulation and Decapsulation
 MAC Address Types
     • Unicast: One to one
         ◦ 8th bit is off
-    • Multicast: One to many
+    • Multicast: One to many.
         ◦ 8th bit is on
     • Broadcast: One to all
         ◦ All bits on
