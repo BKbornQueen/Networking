@@ -38,7 +38,17 @@ Protocol Data Unit (PDU)
 
      1 	Physical = Bit
 __________________________________________________________________________________________________
+IPv4 Fragmentation
 
+    Breaking up packets from higher MTU to lower MTU network
+
+    Performed by routers
+
+    MF flag is on from 1st until 2nd to last
+
+    Offset is on from 2nd until the last
+
+    Offset = (MTU - (IHL x 4)) ÷ 8
 
 Encapsulation and Decapsulation
 
