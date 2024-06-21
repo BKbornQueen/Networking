@@ -44,7 +44,7 @@ Action: Send a Stream Socket Message to this host
 
 Address families
 socket.ADDFAM, socket.ADDFAM, socket.ADDFAM
-AF_INET*, AF_INET6, AF_UNIX
+socket.AF_INET*, socket.AF_INET6, socket.AF_UNIX
 
 socket functions
 socket.connect(), socket.close()
@@ -53,7 +53,7 @@ struct.pack
 
 headers
 
-socket.sendto
+socket.sendto()
 
 ipaddr port
 
@@ -62,15 +62,23 @@ bytes-like object
 
 Modify a Stream Socket script - 
 modify only the ipaddr, port and message field
+blue dmz host
+ipaddr 172.16.1.15
 867-5309
 port 5309
+
 message Jenny Hint remove the new line character /n from the message as it only wants Jenny to appear
 NO NEED to nc to open the listening port as it will already be open on the target device for you and this excercise
 
 
 Modify a Datagram Socket script - 
 modify only the ipaddr, port and message field
-use local loopback address when sending a message to the local device you are operating from 0.0.0.0
+use local loopback address when sending a message to the local device you are operating from 127.0.0.1
+number of fists is port number
+message is band name first letter capitlized
+ipaddr = 127.0.0.1
+port = 10000
+message = Disturbed
 
 Modify IP RAW Socket Script
 Modify 6 sections only src_ip = “” , dst_ip = “” , ip header, tcp header, flags and messages
