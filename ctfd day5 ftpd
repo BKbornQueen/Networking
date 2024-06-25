@@ -102,3 +102,34 @@ Relay3
 nc -lvp 1111 < np1 | nc 172.16.82.115 6789 > np1
 Relay4
 nc -lvp 1111 < np1 | nc 172.16.82.115 9876 > np1
+
+
+
+___________________________________________________________________________________
+Blue-Internet Host Local Machine
+nc 172.16.40.10 1111 > 1.jpg
+ls
+steghide extract -sf 1.jpg
+password
+#<ExtractedFileName> output to the screen
+cat <ExtractedFileName> | md5sum
+
+Local steps are identical for each relay
+_____________
+Relay
+Blue-Int-DMZ-Host
+nc -lvp 1111 < np1 | nc -lvp 1234 > np1
+
+Relay2
+nc -lvp 1111 < np1 | nc -lvp 4321 > np1
+__________
+New relay format
+Relay3
+nc -lvp 1111 < np1 | nc 172.16.82.115 6789 > np1
+
+Relay4
+nc -lvp 1111 < np1 | nc 172.16.82.115 9876 > np1
+
+
+
+
