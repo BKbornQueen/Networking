@@ -3,12 +3,16 @@
        draw your IH box, write your interface and ip.
      2. given an ip for a next hop -> draw next hop and ip
        nmap scan( nmap -Pn -T4 10.10.205.253 -p 21-23 80)
+               Ping scanning
+                   for i in {1..254}; do (ping -c 1 172.16.82.$i | grep "bytes from" &) ; done
+                   then
+                   nmap -Pn -T4 172.16.82.106,112,110,113,114,115,126 -p 21-23,80
      4. banner grab port to make sure it aligns with port (nc 10.10.205.253 22)
      5. write open port/s & creds.
      6. if 22/23 -> connect and start enumeration
      7. if 21 or 80, wget 
-    8. get on the box -> ssh student@10.10.205.253 -> if vyos, l: vyos p: passowrd
-    9. ss -ntlp
+     8. get on the box -> ssh student@10.10.205.253 -> if vyos, l: vyos p: passowrd
+     9. ss -ntlp
     10. ip neigh (if stale, still a possibility)
 
  ## SSH Dynamic Port Forwarding (only use port 9050) (run from internet_host)
