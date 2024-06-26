@@ -36,6 +36,7 @@ follow on action based on ports found
 
 scan methodology	
 nmap -Pn [IP Addr] -T4 -p 21-23,80
+for i in {1..254}; do (ping -c 1 172.16.82.$i | grep "bytes from" &) ; done
 
 quick scan ports 21-23, 80
 specific ports based on hints/clues found
