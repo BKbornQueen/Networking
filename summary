@@ -1,0 +1,12 @@
+## demo
+     1. ip a (find your interfaces)
+       draw your IH box, write your interface and ip.
+     2. given an ip for a next hop -> draw next hop and ip
+       nmap scan( nmap -Pn -T4 10.10.205.253 -p 21-23 80)
+     4. banner grab port to make sure it aligns with port (nc 10.10.205.253 22)
+     5. write open port/s & creds.
+     6. if 22/23 -> connect and start enumeration
+     7. if 21 or 80, wget 
+    8. get on the box -> ssh student@10.10.205.253 -> if vyos, l: vyos p: passowrd
+    9. ss -ntlp
+    10. ip neigh (if stale, still a possibility)
