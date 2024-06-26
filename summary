@@ -10,6 +10,73 @@
     8. get on the box -> ssh student@10.10.205.253 -> if vyos, l: vyos p: passowrd
     9. ss -ntlp
     10. ip neigh (if stale, still a possibility)
+
+ ## SSH Dynamic Port Forwarding (only use port 9050) (run from internet_host)
+
+     ssh -D <port> -p <alt port> <user>@<pivot ip> -NT
+
+ ## SSH Dynamic Port Forwarding 1-Step
+
+     Internet_Host:
+    ssh student@172.16.1.15 -D 9050 -NT
+    
+    proxychains ./scan.sh
+    proxychains nmap -Pn 172.16.40.0/27 -p 21-23,80
+    proxychains ssh student@172.16.40.10
+    proxychains telnet 172.16.40.10
+    proxychains wget -r http://172.16.40.10
+    proxychains wget -r ftp://172.16.40.10
+
+ ## SSH Dynamic Port Forwarding 2-Step
+
+    Internet_Host:
+    ssh student@172.16.1.15 -L 1111:172.16.40.10:22 -NT
+    ssh student@localhost -p 1111 -D 9050 -NT
+    
+    proxychains ./scan.sh
+    proxychains nmap -Pn 172.16.82.96/27 -p 21-23,80
+    proxychains ssh student@172.16.82.106
+    proxychains telnet 172.16.82.106
+    proxychains wget -r http://172.16.82.106
+    proxychains wget -r ftp://172.16.82.106
+
+ ## SSH Remote Port Forwarding
+
+     ssh -p <optional alt port> <user>@<remote ip> -R <remote bind port>:<tgt ip>:<tgt port> -NT
+
+     or
+     
+     ssh -R <remote bind port>:<tgt ip>:<tgt port> -p <alt port> <user>@<remote ip> -NT
+
+     **Creates 1111 on the Internet_Host mapped to Blue_DMZ_Host-1 own localhost port 22**
+     Blue_DMZ_Host-1:
+     ssh student@10.10.0.40 -R 1111:localhost:22 -NT
+     
+     or
+     
+     ssh -R 1111:localhost:22 student@10.10.0.40 -NT
+
+     **Creates a remote port on the remote’s local host that forwards to the target specified**
+     Blue Host-1:
+     ssh student@10.10.0.40 -R 1111:localhost:22 -NT
+     
+     Internet_Host:
+     ssh student@localhost -p 1111 -D 9050 -NT
+
+  ## SSH Remote and Local Port Forwarding
+
+      **Creates a remote port on a remote machine, staging a connection
+       Also creates a local port on the localhost to connect to the previously staged connection**
+
+       Blue Private Host-1:
+       ssh student@192.168.1.1 -R 1111:localhost:22 -NT
+       
+       Internet Host:
+       ssh student@172.16.82.106 -L 2222:localhost:1111 -NT
+       
+       Internet Host:
+       ssh localhost -p 2222 -D 9050 -NT
+
  NETCAT - SCANNING (like nmap but faster, nmap is a little easier to view)
        nc [Options] [Target IP] [Target Port(s)]
        -z : Port scanning mode i.e. zero I/O mode
