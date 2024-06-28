@@ -2166,7 +2166,7 @@ https://net.cybbh.io/public/networking/latest/09_file_transfer/fg.html
     SSH: Initial connection
     NetBIOS Name Service
 
-    **P0F (PASSIVE OS FINGERPRINTING)**
+    **P0F (PASSIVE OS FINGERPRINTING)** Header analysis - can be bypassed if defaults have been altered. BC analysis is based on the default universal standards
     Looks at variations in initial TTL, fragmentation flag, default IP header packet length, window size, and TCP options
     Configuration stored in:
        /etc/p0f/p0f.fp
