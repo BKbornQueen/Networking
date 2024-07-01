@@ -61,26 +61,39 @@ From T1 (Blue Host 1)(172.16.82.106)
       
 
 Specify inbound ICMP	
-	sudo iptables -A INPUT -p icmp --icmp-type 8 -s 10.10.0.40 -j ACCEPT
-	sudo iptables -A OUTPUT -p icmp --icmp-type 0 -s 10.10.0.40 -j ACCEPT
-
+	sudo iptables -A INPUT -p icmp --icmp-type 8 -d 10.10.0.40 -j ACCEPT #( allow ping request from .40)#
+	sudo iptables -A INPUT -p icmp --icmp-type 0 -s 10.10.0.40 -j ACCEPT #(allow ping reply from .40)#
 Specify outboud ICMP	
-	sudo iptables -A OUTPUT -p icmp --icmp-type 8 -d 10.10.0.40 -j ACCEPT
-	sudo iptables -A INPUT -p icmp --icmp-type 0 -d 10.10.0.40-j ACCEPT
+	sudo iptables -A OUTPUT -p icmp --icmp-type 8 -d 10.10.0.40 -j ACCEPT #(allow ping request out to .40)#
+        sudo iptables -A OUTPUT -p icmp --icmp-type 0 -s 10.10.0.40 -j ACCEPT #(allow ping reply out to .40)#
+
     • Allow ports 6579 and 4444 for both udp and tcp traffic
+
 Specify TCP ports using multiport
 	sudo iptables -A INPUT -p tcp -m multiport --ports 6579,4444 -j ACCEPT
 	sudo iptables -A OUTPUT -p tcp -m multiport --ports 6579,4444 -j ACCEPT
 Specify UDP ports using multiport
 	sudo iptables -A INPUT -p udp -m multiport --ports 6579,4444 -j ACCEPT
 	sudo iptables -A OUTPUT -p udp -m multiport --ports 6579,4444 -j ACCEPT
-    • Allow New and Established traffic to/from via HTTP
-Specify TCP states using multiport
 
-sudo iptables -A INPUT -p tcp -m multiport --ports 80 -m state --state NEW,ESTABLISHED -j ACCEPT
-sudo iptables -A OUTPUT -p tcp -m multiport --ports 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+    • Allow New and Established traffic to/from via HTTP
+
+Specify TCP states using multiport (both source and destination ports simultaneously (--ports))
+	sudo iptables -A INPUT -p tcp -m multiport --ports 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+	sudo iptables -A OUTPUT -p tcp -m multiport --ports 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+			OR
+  	Inbound
+ 		sudo iptables -A INPUT -p tcp --sport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+		sudo iptables -A INPUT -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+  	Outbound
+		sudo iptables -A OUTPUT -p tcp --sport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+		sudo iptables -A OUTPUT -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+ 
 
 Once these steps have been completed and tested, go to Pivot and open up a netcat listener on port 9001 and wait up to 2 minutes for your flag. If you did not successfully accomplish the tasks above, then you will not receive the flag.
+On Blue internet Host
+	nc -lvp 9001 
+
 IPTable Rule Definitions T3
 T3
 Hostname: BLUE_INT_DMZ_HOST-1 
@@ -103,6 +116,9 @@ ssh student@172.16.40.10
       sudo iptables -A OUTPUT -p tcp -m multiport --ports 80 -m state --state NEW,ESTABLISHED -j ACCEPT
 
 Once these steps have been completed and tested, go to Pivot and open up a netcat listener on port 9003 and wait up to 2 minutes for your flag. If you did not successfully accomplish the tasks above, then you will not receive the flag.
+On Blue internet Host
+	nc -lvp 9003
+
 T2
 Hostname: BLUE_Host-3
 IP: 172.16.82.112
@@ -193,4 +209,5 @@ Allow New and Established traffic to/from via HTTP
 	nft add rule ip CCTC OUTPUT tcp sport { 80 } ct state { new, established }  accept
 
 Once these steps have been completed and tested, go to Pivot and open up a netcat listener on port 9002 and wait up to 2 minutes for your flag. If you did not successfully accomplish the tasks above, then you will not receive the flag.
-
+On Blue internet Host
+	nc -lvp 9002
