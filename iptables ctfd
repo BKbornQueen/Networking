@@ -91,6 +91,9 @@ Specify TCP states using multiport (both source and destination ports simultaneo
 Once these steps have been completed and tested, go to Pivot and open up a netcat listener on port 9001 and wait up to 2 minutes for your flag. If you did not successfully accomplish the tasks above, then you will not receive the flag.
 On Blue internet Host
 	nc -lvp 9001 
+Your Host Filtering T1 Flag is:
+
+467accfb25050296431008a1357eacb1
 
 IPTable Rule Definitions T3
 T3
@@ -116,6 +119,9 @@ ssh student@172.16.40.10
 Once these steps have been completed and tested, go to Pivot and open up a netcat listener on port 9003 and wait up to 2 minutes for your flag. If you did not successfully accomplish the tasks above, then you will not receive the flag.
 On Blue internet Host
 	nc -lvp 9003
+Your Host Filtering T3 Flag is:
+
+05e5fb96e2a117e01fc1227f1c4d664c
 
 T2
 Hostname: BLUE_Host-3
@@ -132,7 +138,7 @@ nft add table [family] [table]
     [table] = user provided name for the table.
 1. Create the Table using the nft add table command.
 
-		nft add table ip CCTC 
+		sudo nft add table ip CCTC 
    
 2. Create the Base Chain using the nft add chain command.
 Create input and output base chains with:
@@ -140,8 +146,8 @@ Create input and output base chains with:
     Priority of 0
     Policy as Accept
 
-		nft add chain ip CCTC INPUT { type filter hook input priority 0 \; policy accept \;}
-		nft add chain ip CCTC OUTPUT { type filter hook output priority 0 \; policy accept \;}
+		sudo nft add chain ip CCTC INPUT { type filter hook input priority 0 \; policy accept \;}
+		sudo nft add chain ip CCTC OUTPUT { type filter hook output priority 0 \; policy accept \;}
 		
 nft add chain [family] [table] [chain] { type [type] hook [hook] priority [priority] \; policy [policy] \;}   
     [chain] = User defined name for the chain.
@@ -172,40 +178,65 @@ nft add rule [family] [table] [chain] [matches (matches)] [statement]
 [statement] - can be accept, reject, or drop
 
 Allow New and Established traffic to/from via SSH, TELNET, and RDP
-		nft add rule ip CCTC INPUT tcp dport { 21-23, 80, 3389 } accept
-		nft add rule ip CCTC OUTPUT tcp sport { 21-23, 80, 3389 } accept
-		nft add rule ip CCTC OUTPUT tcp dport { 21-23, 80, 3389 } accept
-		nft add rule ip CCTC INPUT tcp sport { 21-23, 80, 3389 } accept
+		sudo nft add rule ip CCTC INPUT tcp sport { 21-23, 80, 3389 } accept
+		sudo nft add rule ip CCTC INPUT tcp dport { 21-23, 80, 3389 } accept
+		sudo nft add rule ip CCTC OUTPUT tcp sport { 21-23, 80, 3389 } accept
+		sudo nft add rule ip CCTC OUTPUT tcp dport { 21-23, 80, 3389 } accept
+		
 
 Change your chains to now have a policy of Drop
-		nft add chain [family] [table] [chain] { \; policy [policy] \;}
+	sudo nft add chain [family] [table] [chain] { \; policy [policy] \;}
+		sudo nft add chain ip CCTC INPUT { \; policy drop \; }
+		sudo nft add chain ip CCTC OUTPUT { \; policy drop \; }
     
 Allow ping (ICMP) requests (and reply) to and from the Pivot(10.10.0.40).
 	Specify inbound ICMP
-		nft add rule ip CCTC INPUT ip saddr 10.10.0.40 icmp type 8 accept
-		nft add rule ip CCTC OUTPUT ip daddr 10.10.0.40 icmp type 0 accept
+		sudo nft add rule ip CCTC INPUT ip saddr 10.10.0.40 icmp type 8 accept
+		sudo nft add rule ip CCTC INPUT ip saddr 10.10.0.40 icmp type 0 accept
 	Specify outboud ICMP
-		nft add rule ip CCTC OUTPUT ip daddr 10.10.0.40 icmp type 8 accept
-		nft add rule ip CCTC INPUT ip saddr 10.10.0.40 icmp type 0 accept
+		sudo nft add rule ip CCTC OUTPUT ip daddr 10.10.0.40 icmp type 8 accept
+		sudo nft add rule ip CCTC OUTPUT ip daddr 10.10.0.40 icmp type 0 accept
 
 Allow ports 5050 and 5150 for both udp and tcp traffic to/from
 	Specify a TCP ports as a server
-		nft add rule ip CCTC INPUT tcp dport { 5050, 5150 } accept
-		nft add rule ip CCTC OUTPUT tcp sport { 5050, 5150 } accept
+		sudo nft add rule ip CCTC INPUT tcp dport { 5050, 5150 } accept
+		sudo nft add rule ip CCTC OUTPUT tcp sport { 5050, 5150 } accept
 	Specify a TCP ports as a client
-		nft add rule ip CCTC OUTPUT tcp dport { 5050, 5150 } accept
-		nft add rule ip CCTC INPUT tcp sport { 5050, 5150 } accept
+		sudo nft add rule ip CCTC OUTPUT tcp dport { 5050, 5150 } accept
+		sudo nft add rule ip CCTC INPUT tcp sport { 5050, 5150 } accept
 	Specify a UDP ports as a server
-		nft add rule ip CCTC INPUT udp dport { 5050, 5150 } accept
-		nft add rule ip CCTC OUTPUT udp sport { 5050, 5150 } accept
+		sudo nft add rule ip CCTC INPUT udp dport { 5050, 5150 } accept
+		sudo nft add rule ip CCTC OUTPUT udp sport { 5050, 5150 } accept
 	Specify a UDP ports as a client	
-		nft add rule ip CCTC OUTPUT udp dport { 5050, 5150 } accept
-		nft add rule ip CCTC INPUT udp sport { 5050, 5150 } accept
+		sudo nft add rule ip CCTC OUTPUT udp dport { 5050, 5150 } accept
+		sudo nft add rule ip CCTC INPUT udp sport { 5050, 5150 } accept
     
 Allow New and Established traffic to/from via HTTP
-	nft add rule ip CCTC INPUT tcp dport { 80 } ct state { new, established } accept
-	nft add rule ip CCTC OUTPUT tcp sport { 80 } ct state { new, established }  accept
+		sudo nft add rule ip CCTC INPUT tcp dport { 80 } ct state { new, established } accept
+		sudo nft add rule ip CCTC OUTPUT tcp sport { 80 } ct state { new, established }  accept
 
 Once these steps have been completed and tested, go to Pivot and open up a netcat listener on port 9002 and wait up to 2 minutes for your flag. If you did not successfully accomplish the tasks above, then you will not receive the flag.
 On Blue internet Host
 	nc -lvp 9002
+Your Host Filtering T2 Flag is:
+
+9f7a33941828bdafd2755fd20176cdf4
+
+
+echo "467accfb25050296431008a1357eacb1_9f7a33941828bdafd2755fd20176cdf4_05e5fb96e2a117e01fc1227f1c4d664c" | md5sum
+
+953e720e688941b15b72c098022c51c3
+
+student@blue-internet-host-student-20:~$ vim stream_sock.py 
+student@blue-internet-host-student-20:~$ ./stream_sock.py 
+Your Host Filtering Validation Flag is:
+
+d3b88e04de1e76482a1972f36734a7d8
+
+student@blue-internet-host-student-20:~$ 
+
+
+
+
+
+
