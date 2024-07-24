@@ -150,6 +150,12 @@ for p in {1..1023}; do(echo >/dev/tcp/<IP>/$p) >/dev/null 2>&1 && echo "$p open"
 for i in {1..254}; do (ping -c 1 172.16.82.$i 2>/dev/null | grep "bytes from" &) ; done
 sudo nmap -sP 172.16.82.96/27
 
+horizontal nc sweep
+tcp
+for i in {1..254}; do nc -nvzw1 ###.###.###.$i 20-23,80 2>&1 & done | grep -E 'succ|open'
+udp
+for i in {1..254}; do nc -nuvzw1 ###.###.###.$i 20-23,80 2>&1 & done | grep -E 'succ|open'
+
 4) interface name and Net ID
 	ip a
  x)protocol validation and listening ports
